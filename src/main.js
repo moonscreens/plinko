@@ -98,12 +98,22 @@ function createPeg(x, y, size = 1) {
 
 	PegMesh.physics = collider;
 	collider.mesh = PegMesh;
+	collider.objectType = 'peg';
 
 	scene.add(PegMesh);
 }
+function hitPeg(collider) {
+	collider.setActive(false);
+	collider.mesh.scale.setScalar(0.25);
 
-for (let x = -5; x < 5; x++) {
-	for (let y = -5; y < 5; y++) {
+	setTimeout(() => {
+		collider.setActive(true);
+		collider.mesh.scale.setScalar(1);
+	}, 1000);
+}
+
+for (let x = -2; x < 2; x++) {
+	for (let y = -2; y < 2; y++) {
 		createPeg((x + (y % 2 === 0 ? 0.5 : 0)) * 3, y * 3)
 	}
 }
@@ -153,7 +163,8 @@ function getBody() {
 		const collider = world.createDynamicBody({
 			position: pos,
 		});
-		const fixture = collider.createFixture(circleShape);
+		collider.objectType = 'emote';
+		collider.createFixture(circleShape);
 		collider.setMassData({
 			mass: 1,
 			center: Physics.Vec2(),
@@ -192,6 +203,7 @@ ChatInstance.listen((emotes) => {
 	const sprite = new THREE.Mesh(emoteGeometry, emote.material);
 
 	const collider = getBody();
+	collider.mesh = sprite;
 	activeBodies.push(collider);
 
 	sprite.update = () => {
@@ -208,3 +220,27 @@ ChatInstance.listen((emotes) => {
 	scene.add(sprite);
 	sceneEmoteArray.push(sprite);
 });
+
+world.on('begin-contact', function (contact) {
+	/* handle begin event */
+	const bodyA = contact.getFixtureA().getBody();
+	const bodyB = contact.getFixtureB().getBody();
+
+	let peg = null;
+	if (bodyA.objectType === 'peg') peg = bodyA;
+	if (bodyB.objectType === 'peg') peg = bodyB;
+	let emote = null;
+	if (bodyA.objectType === 'emote') emote = bodyA;
+	if (bodyB.objectType === 'emote') emote = bodyB;
+
+	if (emote && peg) {
+		const emoteCenter = emote.getWorldCenter().clone();
+		const pegCenter = peg.getWorldCenter().clone();
+		const direction = emoteCenter.sub(pegCenter);
+		emote.applyForceToCenter(direction.mul(2500));
+
+		hitPeg(peg);
+	}
+});
+
+setInterval(() => { console.log(activeBodies.length + inactiveBodies.length, activeBodies.length, inactiveBodies.length) }, 1000);
