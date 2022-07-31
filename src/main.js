@@ -237,7 +237,10 @@ world.on('begin-contact', function (contact) {
 		const emoteCenter = emote.getWorldCenter().clone();
 		const pegCenter = peg.getWorldCenter().clone();
 		const direction = emoteCenter.sub(pegCenter);
+		const emoteVelocity = emote.getLinearVelocity();
+		if (emoteVelocity.y < 0 && direction.y > 0) emote.setLinearVelocity(Physics.Vec2(emoteVelocity.x, emoteVelocity.y * 0.5));
 		emote.applyForceToCenter(direction.mul(2500));
+		emote.applyTorque(Math.random() * (direction.x > 0 ? 1 : -1));
 
 		hitPeg(peg);
 	}
