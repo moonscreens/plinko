@@ -119,7 +119,7 @@ function draw() {
 	const delta = Math.min(1, Math.max(0, (performance.now() - lastFrame) / 1000));
 	lastFrame = performance.now();
 
-	world.step(delta, 10, 8);
+	world.step(delta, 4, 2);
 
 
 	for (let index = sceneEmoteArray.length - 1; index >= 0; index--) {
