@@ -51,12 +51,12 @@ const ChatInstance = new TwitchChat({
 */
 
 const camera = new THREE.PerspectiveCamera(
-	70,
+	40,
 	window.innerWidth / window.innerHeight,
 	0.1,
 	1000
 );
-camera.position.z = 10;
+camera.position.z = 20;
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
