@@ -208,5 +208,3 @@ ChatInstance.listen((emotes) => {
 	scene.add(sprite);
 	sceneEmoteArray.push(sprite);
 });
-
-setInterval(()=>{console.log(activeBodies.length, inactiveBodies.length)}, 1000);
