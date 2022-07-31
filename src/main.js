@@ -142,7 +142,47 @@ function draw() {
 */
 const sceneEmoteArray = [];
 const emoteGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
-const squareShape = Physics.Box(0.45, 0.45);
+
+const activeBodies = [];
+const inactiveBodies = [];
+let currentID = 0;
+
+function getBody() {
+	const pos = Physics.Vec2((Math.random() - 0.5) * 10, 12);
+	if (inactiveBodies.length === 0) {
+		const collider = world.createDynamicBody({
+			position: pos,
+		});
+		const fixture = collider.createFixture(circleShape);
+		collider.setMassData({
+			mass: 1,
+			center: Physics.Vec2(),
+			I: 1
+		});
+		collider.myId = currentID++;
+		return collider;
+	} else {
+		const collider = inactiveBodies.splice(0, 1)[0];
+		collider.setLinearVelocity(Physics.Vec2(0, 0));
+		collider.setAngularVelocity(0);
+		collider.setPosition(pos);
+		collider.setActive(true);
+		return collider;
+	}
+}
+function removeBody(id) {
+	let body = null;
+	for (let index = 0; index < activeBodies.length; index++) {
+		if (activeBodies[index].myId === id) {
+			body = activeBodies.splice(index, 1)[0];
+			continue;
+		}
+	}
+	if (body) {
+		inactiveBodies.push(body);
+	}
+}
+
 ChatInstance.listen((emotes) => {
 	const emote = emotes[0];
 
@@ -151,15 +191,8 @@ ChatInstance.listen((emotes) => {
 
 	const sprite = new THREE.Mesh(emoteGeometry, emote.material);
 
-	const collider = world.createDynamicBody({
-		position: Physics.Vec2((Math.random() - 0.5) * 10, 12),
-	});
-	const fixture = collider.createFixture(circleShape);
-	collider.setMassData({
-		mass: 1,
-		center: Physics.Vec2(),
-		I: 1
-	});
+	const collider = getBody();
+	activeBodies.push(collider);
 
 	sprite.update = () => {
 		const { p, q } = collider.getTransform();
@@ -167,11 +200,13 @@ ChatInstance.listen((emotes) => {
 		sprite.rotation.z = q.s;
 		if (p.y < -10) {
 			sprite.destroy = true;
-			collider.destroyFixture(fixture);
 			collider.setActive(false);
+			removeBody(collider.myId);
 		}
 	}
 
 	scene.add(sprite);
 	sceneEmoteArray.push(sprite);
 });
+
+setInterval(()=>{console.log(activeBodies.length, inactiveBodies.length)}, 1000);
