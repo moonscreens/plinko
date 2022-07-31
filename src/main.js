@@ -3,6 +3,9 @@ import * as THREE from "three";
 import Stats from "stats-js";
 import "./main.css";
 
+
+import * as Physics from "planck";
+
 /*
 ** connect to twitch chat
 */
@@ -32,7 +35,7 @@ const ChatInstance = new TwitchChat({
 	THREE,
 
 	// If using planes, consider using MeshBasicMaterial instead of SpriteMaterial
-	materialType: THREE.SpriteMaterial,
+	materialType: THREE.MeshBasicMaterial,
 
 	// Passed to material options
 	materialOptions: {
@@ -40,7 +43,7 @@ const ChatInstance = new TwitchChat({
 	},
 
 	channels,
-	maximumEmoteLimit: 3,
+	maximumEmoteLimit: 1,
 })
 
 /*
@@ -53,10 +56,10 @@ const camera = new THREE.PerspectiveCamera(
 	0.1,
 	1000
 );
-camera.position.z = 5;
+camera.position.z = 10;
 
 const scene = new THREE.Scene();
-const renderer = new THREE.WebGLRenderer({ antialias: false });
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 function resize() {
@@ -73,6 +76,40 @@ window.addEventListener('DOMContentLoaded', () => {
 })
 
 /*
+** Physics
+*/
+const world = new Physics.World({
+	gravity: Physics.Vec2(0, -5),
+	blockSolve: true,
+});
+
+const circleShape = Physics.Circle(0.5);
+const pegGeometry = new THREE.CylinderBufferGeometry(0.5, 0.5, 1, 16);
+pegGeometry.rotateX(Math.PI / 2);
+const pegMaterial = new THREE.MeshNormalMaterial();
+
+function createPeg(x, y, size = 1) {
+	const PegMesh = new THREE.Mesh(pegGeometry, pegMaterial);
+	PegMesh.position.set(x, y, 0);
+	const collider = world.createBody({
+		position: Physics.Vec2(x, y)
+	});
+	collider.createFixture(circleShape);
+
+	PegMesh.physics = collider;
+	collider.mesh = PegMesh;
+
+	scene.add(PegMesh);
+}
+
+for (let x = -5; x < 5; x++) {
+	for (let y = -5; y < 5; y++) {
+		createPeg((x + (y % 2 === 0 ? 0.5 : 0)) * 3, y * 3)
+	}
+}
+
+
+/*
 ** Draw loop
 */
 let lastFrame = performance.now();
@@ -82,11 +119,12 @@ function draw() {
 	const delta = Math.min(1, Math.max(0, (performance.now() - lastFrame) / 1000));
 	lastFrame = performance.now();
 
+	world.step(delta, 10, 8);
+
 
 	for (let index = sceneEmoteArray.length - 1; index >= 0; index--) {
 		const element = sceneEmoteArray[index];
-		element.position.addScaledVector(element.velocity, delta);
-		if (element.timestamp + element.lifespan < Date.now()) {
+		if (element.destroy) {
 			sceneEmoteArray.splice(index, 1);
 			scene.remove(element);
 		} else {
@@ -103,42 +141,37 @@ function draw() {
 ** Handle Twitch Chat Emotes
 */
 const sceneEmoteArray = [];
+const emoteGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
+const squareShape = Physics.Box(0.45, 0.45);
 ChatInstance.listen((emotes) => {
+	const emote = emotes[0];
 
 	//prevent lag caused by emote buildup when you tab out from the page for a while
 	if (performance.now() - lastFrame > 1000) return;
 
-	const group = new THREE.Group();
-	group.lifespan = 5000;
-	group.timestamp = Date.now();
+	const sprite = new THREE.Mesh(emoteGeometry, emote.material);
 
-	let i = 0;
-	emotes.forEach((emote) => {
-		const sprite = new THREE.Sprite(emote.material);
-		sprite.position.x = i;
-		group.add(sprite);
-		i++;
-	})
+	const collider = world.createDynamicBody({
+		position: Physics.Vec2((Math.random() - 0.5) * 10, 12),
+	});
+	const fixture = collider.createFixture(circleShape);
+	collider.setMassData({
+		mass: 1,
+		center: Physics.Vec2(),
+		I: 1
+	});
 
-	// Set velocity to a random normalized value
-	group.velocity = new THREE.Vector3(
-		(Math.random() - 0.5) * 2,
-		(Math.random() - 0.5) * 2,
-		(Math.random() - 0.5) * 2
-	);
-	group.velocity.normalize();
-
-	group.update = () => { // called every frame
-		let progress = (Date.now() - group.timestamp) / group.lifespan;
-		if (progress < 0.25) { // grow to full size in first quarter
-			group.scale.setScalar(progress * 4);
-		} else if (progress > 0.75) { // shrink to nothing in last quarter
-			group.scale.setScalar((1 - progress) * 4);
-		} else { // maintain full size in middle
-			group.scale.setScalar(1);
+	sprite.update = () => {
+		const { p, q } = collider.getTransform();
+		sprite.position.set(p.x, p.y, 0);
+		sprite.rotation.z = q.s;
+		if (p.y < -10) {
+			sprite.destroy = true;
+			collider.destroyFixture(fixture);
+			collider.setActive(false);
 		}
 	}
 
-	scene.add(group);
-	sceneEmoteArray.push(group);
+	scene.add(sprite);
+	sceneEmoteArray.push(sprite);
 });
