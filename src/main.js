@@ -178,6 +178,7 @@ function getBody() {
 		collider.setAngularVelocity(0);
 		collider.setPosition(pos);
 		collider.setActive(true);
+		collider.setAngle(0);
 		return collider;
 	}
 }
