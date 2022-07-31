@@ -112,8 +112,8 @@ function hitPeg(collider) {
 	}, 1000);
 }
 
-for (let x = -2; x < 2; x++) {
-	for (let y = -2; y < 2; y++) {
+for (let x = -4; x <= 4; x++) {
+	for (let y = -2; y <= 2; y++) {
 		createPeg((x + (y % 2 === 0 ? 0.5 : 0)) * 3, y * 3)
 	}
 }
