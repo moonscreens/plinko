@@ -249,5 +249,3 @@ world.on('begin-contact', function (contact) {
 		hitPeg(peg);
 	}
 });
-
-setInterval(() => { console.log(activeBodies.length + inactiveBodies.length, activeBodies.length, inactiveBodies.length) }, 1000);
