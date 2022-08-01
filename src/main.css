@@ -61,6 +61,6 @@ img[src="/plinko.gif"] {
 	width: 50%;
 	opacity: 0;
 	animation: blink 30s infinite;
-	animation-delay: 60s;
+	animation-delay: 120s;
 	animation-timing-function: step-end;
 }
