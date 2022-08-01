@@ -79,7 +79,7 @@ window.addEventListener('DOMContentLoaded', () => {
 ** Physics
 */
 const world = new Physics.World({
-	gravity: Physics.Vec2(0, -5),
+	gravity: Physics.Vec2(0, -7.5),
 	blockSolve: true,
 });
 
@@ -240,9 +240,11 @@ world.on('begin-contact', function (contact) {
 		const direction = emoteCenter.sub(pegCenter);
 		const emoteVelocity = emote.getLinearVelocity();
 		if (emoteVelocity.y < 0 && direction.y > 0) emote.setLinearVelocity(Physics.Vec2(emoteVelocity.x, emoteVelocity.y * 0.5));
-		emote.applyForceToCenter(direction.mul(2500));
-		emote.applyTorque(Math.random() * (direction.x > 0 ? 1 : -1));
-
+		
+		setTimeout(()=>{
+			emote.applyForceToCenter(direction.mul(2500));
+			emote.applyTorque(Math.random() * (direction.x > 0 ? 1 : -1));
+		},0)
 		hitPeg(peg);
 	}
 });
