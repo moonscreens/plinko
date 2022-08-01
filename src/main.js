@@ -56,7 +56,7 @@ const camera = new THREE.PerspectiveCamera(
 	0.1,
 	1000
 );
-camera.position.z = 20;
+camera.position.z = 30;
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -112,8 +112,8 @@ function hitPeg(collider) {
 	}, 1000);
 }
 
-for (let x = -4; x <= 4; x++) {
-	for (let y = -2; y <= 2; y++) {
+for (let x = -7; x <= 7; x++) {
+	for (let y = -3; y <= 3; y++) {
 		createPeg((x + (y % 2 === 0 ? 0.5 : 0)) * 3, y * 3)
 	}
 }
@@ -158,7 +158,7 @@ const inactiveBodies = [];
 let currentID = 0;
 
 function getBody() {
-	const pos = Physics.Vec2((Math.random() - 0.5) * 10, 12);
+	const pos = Physics.Vec2((Math.random() - 0.5) * 30, 12);
 	if (inactiveBodies.length === 0) {
 		const collider = world.createDynamicBody({
 			position: pos,
