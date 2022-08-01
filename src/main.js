@@ -211,7 +211,7 @@ ChatInstance.listen((emotes) => {
 		const { p, q } = collider.getTransform();
 		sprite.position.set(p.x, p.y, 0);
 		sprite.rotation.z = q.s;
-		if (p.y < -10) {
+		if (p.y < -15) {
 			sprite.destroy = true;
 			collider.setActive(false);
 			removeBody(collider.myId);
