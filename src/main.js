@@ -242,10 +242,10 @@ world.on('begin-contact', function (contact) {
 		const direction = emoteCenter.sub(pegCenter);
 		const emoteVelocity = emote.getLinearVelocity();
 		//if (emoteVelocity.y < 0 && direction.y > 0) emote.setLinearVelocity(Physics.Vec2(emoteVelocity.x, emoteVelocity.y * 0.5));
-		
-		setTimeout(()=>{
+
+		setTimeout(() => {
 			emote.applyLinearImpulse(direction.mul(7), emoteCenter);
-		},0)
+		}, 0)
 		hitPeg(peg);
 	}
 });
