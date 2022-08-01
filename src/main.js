@@ -80,7 +80,6 @@ window.addEventListener('DOMContentLoaded', () => {
 */
 const world = new Physics.World({
 	gravity: Physics.Vec2(0, -7.5),
-	blockSolve: true,
 });
 
 const circleShape = Physics.Circle(0.5);
@@ -123,11 +122,13 @@ for (let x = -7; x <= 7; x++) {
 ** Draw loop
 */
 let lastFrame = performance.now();
+let lastDelta = 0;
 function draw() {
 	if (stats) stats.begin();
 	requestAnimationFrame(draw);
 	const delta = Math.min(1, Math.max(0, (performance.now() - lastFrame) / 1000));
 	lastFrame = performance.now();
+	lastDelta = delta;
 
 	world.step(delta, 4, 2);
 
@@ -168,8 +169,9 @@ function getBody() {
 		collider.setMassData({
 			mass: 1,
 			center: Physics.Vec2(),
-			I: 1
+			I: 1,
 		});
+		collider.setAngularDamping(100);
 		collider.myId = currentID++;
 		return collider;
 	} else {
@@ -239,11 +241,10 @@ world.on('begin-contact', function (contact) {
 		const pegCenter = peg.getWorldCenter().clone();
 		const direction = emoteCenter.sub(pegCenter);
 		const emoteVelocity = emote.getLinearVelocity();
-		if (emoteVelocity.y < 0 && direction.y > 0) emote.setLinearVelocity(Physics.Vec2(emoteVelocity.x, emoteVelocity.y * 0.5));
+		//if (emoteVelocity.y < 0 && direction.y > 0) emote.setLinearVelocity(Physics.Vec2(emoteVelocity.x, emoteVelocity.y * 0.5));
 		
 		setTimeout(()=>{
-			emote.applyForceToCenter(direction.mul(2500));
-			emote.applyTorque(Math.random() * (direction.x > 0 ? 1 : -1));
+			emote.applyLinearImpulse(direction.mul(7), emoteCenter);
 		},0)
 		hitPeg(peg);
 	}
