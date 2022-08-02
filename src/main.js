@@ -89,14 +89,18 @@ const pegMaterial = new THREE.MeshNormalMaterial();
 const superBouncePegMaterial = new THREE.MeshBasicMaterial({
 	color: 0xff4422,
 });
+const noBouncePegMaterial = new THREE.MeshBasicMaterial({
+	color: 0x444444,
+});
 
 const togglePegs = [];
 let toggledNumber = 0;
 function createPeg(x, y, options = {}) {
 	let mat = pegMaterial;
-	if (options.superbounce) {
-		mat = superBouncePegMaterial;
-	}
+
+	if (options.superbounce) mat = superBouncePegMaterial;
+	if (options.nobounce) mat = noBouncePegMaterial;
+
 	const PegMesh = new THREE.Mesh(pegGeometry, mat);
 	PegMesh.position.set(x, y, 0);
 	const collider = world.createBody({
@@ -153,6 +157,7 @@ for (let x = -Math.round(boardLength * 0.75); x < Math.round(boardLength * 0.75)
 	createPeg(x * 1.25, Math.sin((x / boardLength) * Math.PI * 3) * 1.5, {
 		toggles: true,
 		superbounce: Math.abs(x) === 4,
+		nobounce: Math.abs(x) === 8,
 	})
 }
 
@@ -296,6 +301,8 @@ world.on('begin-contact', function (contact) {
 	let peg = null;
 	if (bodyA.objectType === 'peg') peg = bodyA;
 	if (bodyB.objectType === 'peg') peg = bodyB;
+	if (peg && peg.customConfig && peg.customConfig.nobounce) return;
+
 	let emote = null;
 	if (bodyA.objectType === 'emote') emote = bodyA;
 	if (bodyB.objectType === 'emote') emote = bodyB;
