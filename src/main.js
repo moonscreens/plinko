@@ -108,7 +108,7 @@ function hitPeg(collider) {
 	setTimeout(() => {
 		collider.setActive(true);
 		collider.mesh.scale.setScalar(1);
-	}, 1000);
+	}, 1500);
 }
 
 for (let x = -7; x <= 7; x++) {
@@ -143,6 +143,8 @@ function draw() {
 		}
 	}
 
+	instancedSphere.instanceMatrix.needsUpdate = true;
+
 	renderer.render(scene, camera);
 	if (stats) stats.end();
 };
@@ -153,6 +155,17 @@ function draw() {
 */
 const sceneEmoteArray = [];
 const emoteGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
+
+const sphereGeometry = new THREE.RingBufferGeometry(0.5, 0.525, 16);
+const sphereMaterial = new THREE.MeshBasicMaterial({
+	color: 0x666666,
+	opacity: 0.1,
+});
+const instancedSphere = new THREE.InstancedMesh(sphereGeometry, sphereMaterial, 1024);
+instancedSphere.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+
+scene.add(instancedSphere);
+const dummy = new THREE.Object3D();
 
 const activeBodies = [];
 const inactiveBodies = [];
@@ -212,7 +225,14 @@ ChatInstance.listen((emotes) => {
 	sprite.update = () => {
 		const { p, q } = collider.getTransform();
 		sprite.position.set(p.x, p.y, 0);
-		sprite.rotation.z = q.s;
+		const velocity = collider.getLinearVelocity();
+		sprite.rotation.z = Math.atan2(velocity.x, velocity.y);
+
+		dummy.position.copy(sprite.position);
+		dummy.position.z = -0.1;
+		dummy.updateMatrixWorld();
+		instancedSphere.setMatrixAt(collider.myId, dummy.matrixWorld);
+
 		if (p.y < -15) {
 			sprite.destroy = true;
 			collider.setActive(false);
