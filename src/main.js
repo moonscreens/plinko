@@ -156,9 +156,9 @@ function draw() {
 const sceneEmoteArray = [];
 const emoteGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
 
-const sphereGeometry = new THREE.RingBufferGeometry(0.45, 0.525, 16, 1);
+const sphereGeometry = new THREE.RingBufferGeometry(0.15, 0.35, 16, 1);
 const sphereMaterial = new THREE.MeshBasicMaterial({
-	color: 0x666666,
+	color: 0x333333,
 	opacity: 0.1,
 });
 const instancedSphere = new THREE.InstancedMesh(sphereGeometry, sphereMaterial, 1024);
@@ -210,6 +210,7 @@ function removeBody(id) {
 	}
 }
 
+const dummyVector = new THREE.Vector2();
 ChatInstance.listen((emotes) => {
 	const emote = emotes[0];
 
@@ -225,8 +226,10 @@ ChatInstance.listen((emotes) => {
 	sprite.update = () => {
 		const { p, q } = collider.getTransform();
 		sprite.position.set(p.x, p.y, 0);
-		const velocity = collider.getLinearVelocity();
-		sprite.rotation.z = Math.atan2(velocity.x, velocity.y);
+
+		/*const velocity = collider.getLinearVelocity();
+		dummyVector.set(velocity.x, velocity.y).normalize();
+		sprite.rotation.z = Math.atan2(dummyVector.x, dummyVector.y);*/
 
 		dummy.position.copy(sprite.position);
 		dummy.position.z = -0.1;
