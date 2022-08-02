@@ -75,6 +75,12 @@ window.addEventListener('DOMContentLoaded', () => {
 	draw();
 })
 
+const sun = new THREE.DirectionalLight(0xffffff, 1);
+sun.position.set(1, 1, 0.5);
+scene.add(sun);
+
+scene.add(new THREE.AmbientLight(0x657576, 0.8))
+
 /*
 ** Physics
 */
@@ -85,12 +91,18 @@ const world = new Physics.World({
 const circleShape = Physics.Circle(0.5);
 const pegGeometry = new THREE.CylinderBufferGeometry(0.5, 0.5, 1, 16);
 pegGeometry.rotateX(Math.PI / 2);
-const pegMaterial = new THREE.MeshNormalMaterial();
-const superBouncePegMaterial = new THREE.MeshBasicMaterial({
-	color: 0xff4422,
+const pegMaterial = new THREE.MeshPhongMaterial({
+	shininess: 0,
 });
-const noBouncePegMaterial = new THREE.MeshBasicMaterial({
-	color: 0x444444,
+const superBouncePegMaterial = new THREE.MeshPhongMaterial({
+	color: 0xff4422,
+	specular: 0xff0000,
+	shininess: 100,
+});
+const noBouncePegMaterial = new THREE.MeshPhongMaterial({
+	color: 0x2277ff,
+	specular: 0x0000ff,
+	shininess: 100,
 });
 
 const togglePegs = [];
@@ -202,6 +214,7 @@ const emoteGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
 
 const sphereGeometry = new THREE.CircleBufferGeometry(1, 1, -Math.PI / 8, Math.PI / 4);
 sphereGeometry.translate(-0.5, 0, 0);
+sphereGeometry.scale(1.25, 1.25, 1.25);
 const sphereMaterial = new THREE.MeshBasicMaterial({
 	color: 0x333333,
 	opacity: 0.1,
