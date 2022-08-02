@@ -122,7 +122,7 @@ function hitPeg(collider) {
 
 let lastToggle = performance.now();
 setInterval(()=>{
-	if (lastToggle < performance.now() - 15000 || toggledNumber / togglePegs.length > 0.65) {
+	if (lastToggle < performance.now() - 15000 || toggledNumber / togglePegs.length > 0.6) {
 		lastToggle = performance.now();
 		toggledNumber = 0;
 		for (let index = 0; index < togglePegs.length; index++) {
