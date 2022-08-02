@@ -87,7 +87,9 @@ const pegGeometry = new THREE.CylinderBufferGeometry(0.5, 0.5, 1, 16);
 pegGeometry.rotateX(Math.PI / 2);
 const pegMaterial = new THREE.MeshNormalMaterial();
 
-function createPeg(x, y, size = 1) {
+const togglePegs = [];
+let toggledNumber = 0;
+function createPeg(x, y, toggles = false) {
 	const PegMesh = new THREE.Mesh(pegGeometry, pegMaterial);
 	PegMesh.position.set(x, y, 0);
 	const collider = world.createBody({
@@ -99,22 +101,47 @@ function createPeg(x, y, size = 1) {
 	collider.mesh = PegMesh;
 	collider.objectType = 'peg';
 
+	collider.toggles = toggles;
+	if (toggles) togglePegs.push(collider);
+
 	scene.add(PegMesh);
 }
 function hitPeg(collider) {
 	collider.setActive(false);
 	collider.mesh.scale.setScalar(0.25);
 
+	if (collider.toggles) {
+		toggledNumber++;
+		return;
+	}
 	setTimeout(() => {
 		collider.setActive(true);
 		collider.mesh.scale.setScalar(1);
 	}, 1500);
 }
 
-for (let x = -7; x <= 7; x++) {
-	for (let y = -3; y <= 3; y++) {
-		createPeg((x + (y % 2 === 0 ? 0.5 : 0)) * 3, y * 3)
+let lastToggle = performance.now();
+setInterval(()=>{
+	if (lastToggle < performance.now() - 15000 || toggledNumber / togglePegs.length > 0.65) {
+		lastToggle = performance.now();
+		toggledNumber = 0;
+		for (let index = 0; index < togglePegs.length; index++) {
+			const element = togglePegs[index];
+			element.setActive(true);
+			element.mesh.scale.setScalar(1);
+		}
 	}
+}, 1000);
+
+const boardLength = 21;
+for (let x = -boardLength / 3; x <= boardLength / 3; x++) {
+	for (let y = -4; y <= 4; y++) {
+		if (y > 1 || y < -1) createPeg((x + (y % 2 === 0 ? 0.5 : 0)) * 3, y * 2.5)
+	}
+}
+
+for (let x = -boardLength * 0.75; x < boardLength * 0.75; x++) {
+	createPeg(x * 1.25, Math.sin((x / boardLength) * Math.PI * 3) * 1.5, true)
 }
 
 
