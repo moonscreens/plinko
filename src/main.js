@@ -62,6 +62,8 @@ const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
+scene.background = new THREE.Color(0x222222);
+
 function resize() {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
