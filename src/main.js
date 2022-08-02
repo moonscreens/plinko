@@ -168,8 +168,8 @@ for (let x = -boardLength / 3; x <= boardLength / 3; x++) {
 for (let x = -Math.round(boardLength * 0.75); x < Math.round(boardLength * 0.75); x++) {
 	createPeg(x * 1.25, Math.sin((x / boardLength) * Math.PI * 3) * 1.5, {
 		toggles: true,
-		superbounce: Math.abs(x) === 4,
-		nobounce: Math.abs(x) === 8,
+		superbounce: Math.abs(x) === 4 || Math.abs(x) === 12,
+		nobounce: Math.abs(x) === 8 || Math.abs(x) === 16,
 	})
 }
 
