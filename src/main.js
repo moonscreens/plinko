@@ -218,7 +218,7 @@ const sphereGeometry = new THREE.CircleBufferGeometry(1, 1, -Math.PI / 8, Math.P
 sphereGeometry.translate(-0.5, 0, 0);
 sphereGeometry.scale(1.25, 1.25, 1.25);
 const sphereMaterial = new THREE.MeshBasicMaterial({
-	color: 0x333333,
+	color: 0x444444,
 	opacity: 0.1,
 });
 const instancedSphere = new THREE.InstancedMesh(sphereGeometry, sphereMaterial, 1024);
