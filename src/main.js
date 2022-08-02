@@ -156,7 +156,7 @@ function draw() {
 const sceneEmoteArray = [];
 const emoteGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
 
-const sphereGeometry = new THREE.RingBufferGeometry(0.5, 0.525, 16);
+const sphereGeometry = new THREE.RingBufferGeometry(0.45, 0.525, 16, 1);
 const sphereMaterial = new THREE.MeshBasicMaterial({
 	color: 0x666666,
 	opacity: 0.1,
