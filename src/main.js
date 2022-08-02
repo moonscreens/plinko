@@ -86,11 +86,18 @@ const circleShape = Physics.Circle(0.5);
 const pegGeometry = new THREE.CylinderBufferGeometry(0.5, 0.5, 1, 16);
 pegGeometry.rotateX(Math.PI / 2);
 const pegMaterial = new THREE.MeshNormalMaterial();
+const superBouncePegMaterial = new THREE.MeshBasicMaterial({
+	color: 0xff4422,
+});
 
 const togglePegs = [];
 let toggledNumber = 0;
-function createPeg(x, y, toggles = false) {
-	const PegMesh = new THREE.Mesh(pegGeometry, pegMaterial);
+function createPeg(x, y, options = {}) {
+	let mat = pegMaterial;
+	if (options.superbounce) {
+		mat = superBouncePegMaterial;
+	}
+	const PegMesh = new THREE.Mesh(pegGeometry, mat);
 	PegMesh.position.set(x, y, 0);
 	const collider = world.createBody({
 		position: Physics.Vec2(x, y)
@@ -101,16 +108,18 @@ function createPeg(x, y, toggles = false) {
 	collider.mesh = PegMesh;
 	collider.objectType = 'peg';
 
-	collider.toggles = toggles;
-	if (toggles) togglePegs.push(collider);
+	collider.customConfig = options;
 
+	if (options.toggles) {
+		togglePegs.push(collider);
+	}
 	scene.add(PegMesh);
 }
 function hitPeg(collider) {
 	collider.setActive(false);
 	collider.mesh.scale.setScalar(0.25);
 
-	if (collider.toggles) {
+	if (collider.customConfig.toggles) {
 		toggledNumber++;
 		return;
 	}
@@ -121,7 +130,7 @@ function hitPeg(collider) {
 }
 
 let lastToggle = performance.now();
-setInterval(()=>{
+setInterval(() => {
 	if (lastToggle < performance.now() - 15000 || toggledNumber / togglePegs.length > 0.6) {
 		lastToggle = performance.now();
 		toggledNumber = 0;
@@ -140,8 +149,11 @@ for (let x = -boardLength / 3; x <= boardLength / 3; x++) {
 	}
 }
 
-for (let x = -boardLength * 0.75; x < boardLength * 0.75; x++) {
-	createPeg(x * 1.25, Math.sin((x / boardLength) * Math.PI * 3) * 1.5, true)
+for (let x = -Math.round(boardLength * 0.75); x < Math.round(boardLength * 0.75); x++) {
+	createPeg(x * 1.25, Math.sin((x / boardLength) * Math.PI * 3) * 1.5, {
+		toggles: true,
+		superbounce: Math.abs(x) === 4,
+	})
 }
 
 
@@ -292,11 +304,14 @@ world.on('begin-contact', function (contact) {
 		const emoteCenter = emote.getWorldCenter().clone();
 		const pegCenter = peg.getWorldCenter().clone();
 		const direction = emoteCenter.sub(pegCenter);
-		const emoteVelocity = emote.getLinearVelocity();
+		//const emoteVelocity = emote.getLinearVelocity();
 		//if (emoteVelocity.y < 0 && direction.y > 0) emote.setLinearVelocity(Physics.Vec2(emoteVelocity.x, emoteVelocity.y * 0.5));
 
+		let multiplier = 7;
+		if (peg.customConfig.superbounce) multiplier *= 4;
+
 		setTimeout(() => {
-			emote.applyLinearImpulse(direction.mul(7), emoteCenter);
+			emote.applyLinearImpulse(direction.mul(multiplier), emoteCenter);
 		}, 0)
 		hitPeg(peg);
 	}
