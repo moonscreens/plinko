@@ -1,4 +1,5 @@
 import { CircleBufferGeometry, Group, Mesh, MeshBasicMaterial, MeshNormalMaterial, Vector3 } from "three";
+import { world } from "./physics";
 
 const spots = {
 	idle: {

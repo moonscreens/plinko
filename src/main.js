@@ -82,15 +82,9 @@ scene.add(sun);
 
 scene.add(new THREE.AmbientLight(0x657576, 0.8));
 
-import dude from './dude.js';
-scene.add(dude);
-
 /*
 ** Physics
 */
-const world = new Physics.World({
-	gravity: Physics.Vec2(0, -7.5),
-});
 
 const circleShape = Physics.Circle(0.25);
 const pegGeometry = new THREE.CylinderBufferGeometry(0.25, 0.4, 1, 16);
@@ -244,11 +238,11 @@ function getBody() {
 		collider.objectType = 'emote';
 		collider.createFixture(circleShape);
 		collider.setMassData({
-			mass: 1,
+			mass: 0.5,
 			center: Physics.Vec2(),
 			I: 1,
 		});
-		collider.setAngularDamping(100);
+		collider.setAngularDamping(10);
 		collider.myId = currentID++;
 		return collider;
 	} else {
@@ -342,3 +336,9 @@ world.on('begin-contact', function (contact) {
 		hitPeg(peg);
 	}
 });
+
+
+
+import dude from './dude.js';
+import { world } from "./physics";
+scene.add(dude);
