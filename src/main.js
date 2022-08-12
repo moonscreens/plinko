@@ -49,12 +49,12 @@ const ChatInstance = new TwitchChat({
 */
 
 const camera = new THREE.PerspectiveCamera(
-	40,
+	70,
 	window.innerWidth / window.innerHeight,
 	0.1,
 	1000
 );
-camera.position.z = 30;
+camera.position.z = 13;
 camera.position.x = -10;
 
 const scene = new THREE.Scene();
@@ -216,7 +216,7 @@ function draw() {
 ** Handle Twitch Chat Emotes
 */
 const sceneEmoteArray = [];
-const emoteGeometry = new THREE.PlaneBufferGeometry(0.25, 0.25, 1, 1);
+const emoteGeometry = new THREE.PlaneBufferGeometry(0.5, 0.5, 1, 1);
 
 const sphereGeometry = new THREE.CircleBufferGeometry(0.25, 1, -Math.PI / 8, Math.PI / 4);
 sphereGeometry.translate(-0.5, 0, 0);
@@ -236,7 +236,7 @@ const inactiveBodies = [];
 let currentID = 0;
 
 function getBody() {
-	const pos = Physics.Vec2((Math.random() - 0.5) * 30, 12);
+	const pos = Physics.Vec2((Math.random() - 0.5) * 10, 12);
 	if (inactiveBodies.length === 0) {
 		const collider = world.createDynamicBody({
 			position: pos,
