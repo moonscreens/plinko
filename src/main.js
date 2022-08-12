@@ -216,9 +216,9 @@ function draw() {
 ** Handle Twitch Chat Emotes
 */
 const sceneEmoteArray = [];
-const emoteGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
+const emoteGeometry = new THREE.PlaneBufferGeometry(0.25, 0.25, 1, 1);
 
-const sphereGeometry = new THREE.CircleBufferGeometry(1, 1, -Math.PI / 8, Math.PI / 4);
+const sphereGeometry = new THREE.CircleBufferGeometry(0.25, 1, -Math.PI / 8, Math.PI / 4);
 sphereGeometry.translate(-0.5, 0, 0);
 sphereGeometry.scale(1.25, 1.25, 1.25);
 const sphereMaterial = new THREE.MeshBasicMaterial({
