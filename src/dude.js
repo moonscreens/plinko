@@ -14,7 +14,7 @@ const spots = {
 		offHand: new Vector3(-3, -2,  -1.5),
 	},
 	dropping: {
-		all: new Vector3(-3, 4, 0),
+		all: new Vector3(-2, 5, 0),
 		head: new Vector3(0, 0, -1),
 		mainHand: new Vector3(2, 1, 0),
 		offHand: new Vector3(-3, -1, -1.2),
