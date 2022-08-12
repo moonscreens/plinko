@@ -55,6 +55,7 @@ const camera = new THREE.PerspectiveCamera(
 	1000
 );
 camera.position.z = 30;
+camera.position.x = -10;
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -91,8 +92,8 @@ const world = new Physics.World({
 	gravity: Physics.Vec2(0, -7.5),
 });
 
-const circleShape = Physics.Circle(0.5);
-const pegGeometry = new THREE.CylinderBufferGeometry(0.5, 0.5, 1, 16);
+const circleShape = Physics.Circle(0.25);
+const pegGeometry = new THREE.CylinderBufferGeometry(0.25, 0.4, 1, 16);
 pegGeometry.rotateX(Math.PI / 2);
 const pegMaterial = new THREE.MeshPhongMaterial({
 	shininess: 0,
@@ -161,15 +162,15 @@ setInterval(() => {
 	}
 }, 1000);
 
-const boardLength = 21;
+const boardLength = 8;
 for (let x = -boardLength / 3; x <= boardLength / 3; x++) {
-	for (let y = -4; y <= 4; y++) {
-		if (y > 1 || y < -1) createPeg((x + (y % 2 === 0 ? 0.5 : 0)) * 3, y * 2.5)
+	for (let y = -5; y <= 5; y++) {
+		if (y > 1 || y < -1) createPeg((x + (y % 2 === 0 ? 0.5 : 0)) * 2, y * 1.5)
 	}
 }
 
 for (let x = -Math.round(boardLength * 0.75); x < Math.round(boardLength * 0.75); x++) {
-	createPeg(x * 1.25, Math.sin((x / boardLength) * Math.PI * 3) * 1.5, {
+	createPeg(x * 1, Math.sin((x / boardLength) * Math.PI * 1.5) * 1.5, {
 		toggles: true,
 		superbounce: Math.abs(x) === 4 || Math.abs(x) === 12,
 		nobounce: Math.abs(x) === 8 || Math.abs(x) === 16,
