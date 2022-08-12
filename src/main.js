@@ -32,8 +32,6 @@ if (query_vars.stats) {
 }
 
 const ChatInstance = new TwitchChat({
-	THREE,
-
 	// If using planes, consider using MeshBasicMaterial instead of SpriteMaterial
 	materialType: THREE.MeshBasicMaterial,
 
@@ -81,7 +79,10 @@ const sun = new THREE.DirectionalLight(0xffffff, 1);
 sun.position.set(1, 1, 0.5);
 scene.add(sun);
 
-scene.add(new THREE.AmbientLight(0x657576, 0.8))
+scene.add(new THREE.AmbientLight(0x657576, 0.8));
+
+import dude from './dude.js';
+scene.add(dude);
 
 /*
 ** Physics
@@ -202,6 +203,8 @@ function draw() {
 	}
 
 	instancedSphere.instanceMatrix.needsUpdate = true;
+
+	dude.tick(delta);
 
 	renderer.render(scene, camera);
 	if (stats) stats.end();
