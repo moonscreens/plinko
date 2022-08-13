@@ -253,7 +253,7 @@ const inactiveBodies = [];
 let currentID = 0;
 
 function getBody() {
-	const pos = Physics.Vec2((Math.random() - 0.5) * 14, 12);
+	const pos = Physics.Vec2((Math.random() - 0.5) * 13.5, 12);
 	if (inactiveBodies.length === 0) {
 		const collider = world.createDynamicBody({
 			position: pos,
