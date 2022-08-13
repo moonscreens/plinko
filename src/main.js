@@ -103,6 +103,26 @@ const noBouncePegMaterial = new THREE.MeshPhongMaterial({
 	shininess: 100,
 });
 
+const wallMaterial = new MeshPhongMaterial({});
+const wallGeometry = new BoxBufferGeometry(1, 1, 1);
+function createWall(x, y, width, height) {
+	const WallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
+	WallMesh.scale.set(width, height, 1);
+	WallMesh.position.set(x, y, 0);
+	const collider = world.createBody({
+		position: Physics.Vec2(x, y)
+	});
+	collider.createFixture(Physics.Box(width, height));
+
+	WallMesh.physics = collider;
+	collider.mesh = WallMesh;
+	collider.objectType = 'wall';
+
+	scene.add(WallMesh);
+}
+scene.add(createWall(-7, 0, 0.25, 17));
+scene.add(createWall(+7, 0, 0.25, 17));
+
 const togglePegs = [];
 let toggledNumber = 0;
 function createPeg(x, y, options = {}) {
@@ -157,14 +177,14 @@ setInterval(() => {
 }, 1000);
 
 const boardLength = 8;
-for (let x = -boardLength / 3; x <= boardLength / 3; x++) {
+for (let x = -boardLength / 2; x <= boardLength / 2; x++) {
 	for (let y = -5; y <= 5; y++) {
-		if (y > 1 || y < -1) createPeg((x + (y % 2 === 0 ? 0.5 : 0)) * 2, y * 1.5)
+		if (y > 1 || y < -1) createPeg((x + (y % 2 === 0 ? 0.5 : 0)) * 1.5, y * 1.5)
 	}
 }
 
-for (let x = -Math.round(boardLength * 0.75); x < Math.round(boardLength * 0.75); x++) {
-	createPeg(x * 1, Math.sin((x / boardLength) * Math.PI * 1.5) * 1.5, {
+for (let x = -Math.round(boardLength * 1.5); x < Math.round(boardLength * 1.5); x++) {
+	createPeg(x * 0.5 + 0.5, Math.sin((x / boardLength) * Math.PI * 1.5), {
 		toggles: true,
 		superbounce: Math.abs(x) === 4 || Math.abs(x) === 12,
 		nobounce: Math.abs(x) === 8 || Math.abs(x) === 16,
@@ -316,6 +336,10 @@ world.on('begin-contact', function (contact) {
 	if (bodyB.objectType === 'peg') peg = bodyB;
 	if (peg && peg.customConfig && peg.customConfig.nobounce) return;
 
+	let wall = null;
+	if (bodyA.objectType === 'wall') wall = bodyA;
+	if (bodyB.objectType === 'wall') wall = bodyB;
+
 	let emote = null;
 	if (bodyA.objectType === 'emote') emote = bodyA;
 	if (bodyB.objectType === 'emote') emote = bodyB;
@@ -335,10 +359,16 @@ world.on('begin-contact', function (contact) {
 		}, 0)
 		hitPeg(peg);
 	}
+	if (emote && wall) {
+		const velocity = emote.getLinearVelocity();
+		velocity.x *= -1;
+		emote.setLinearVelocity(velocity);
+	}
 });
 
 
 
 import dude from './dude.js';
 import { world } from "./physics";
+import { BoxBufferGeometry, MeshPhongMaterial } from "three";
 scene.add(dude);
