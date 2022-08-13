@@ -130,7 +130,7 @@ scene.add(createWall(+7.5, 0, 0.25, 17)); //right wall
 
 // idle walls outside board
 scene.add(createWall(-10, 0 + 4, 3, 0.5, -0.5));
-scene.add(createWall(-8.5, -3 + 4, 3, 0.5, 0.5));
+scene.add(createWall(-8.3, -3 + 4, 3, 0.5, 0.5));
 scene.add(createWall(-12, -5 + 4, 5, 0.5, -0.5));
 
 const togglePegs = [];
