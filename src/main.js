@@ -265,7 +265,7 @@ function getBody() {
 			center: Physics.Vec2(),
 			I: 1,
 		});
-		collider.setAngularDamping(10);
+		collider.setAngularDamping(1);
 		collider.myId = currentID++;
 		return collider;
 	} else {
