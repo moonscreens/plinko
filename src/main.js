@@ -207,7 +207,7 @@ function draw() {
 	lastFrame = performance.now();
 	lastDelta = delta;
 
-	world.step(delta, 4, 2);
+	world.step(delta, 8, 4);
 
 
 	for (let index = sceneEmoteArray.length - 1; index >= 0; index--) {
@@ -253,7 +253,7 @@ const inactiveBodies = [];
 let currentID = 0;
 
 function getBody() {
-	const pos = Physics.Vec2((Math.random() - 0.5) * 10, 12);
+	const pos = Physics.Vec2((Math.random() - 0.5) * 14, 12);
 	if (inactiveBodies.length === 0) {
 		const collider = world.createDynamicBody({
 			position: pos,
@@ -265,7 +265,7 @@ function getBody() {
 			center: Physics.Vec2(),
 			I: 1,
 		});
-		collider.setAngularDamping(1);
+		collider.setAngularDamping(0);
 		collider.myId = currentID++;
 		return collider;
 	} else {
