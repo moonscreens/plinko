@@ -107,15 +107,16 @@ const noBouncePegMaterial = new THREE.MeshPhongMaterial({
 const wallMaterial = new MeshPhongMaterial({
 	color: 0x777777,
 });
-const wallGeometry = new BoxBufferGeometry(1, 1, 1);
-function createWall(x, y, width, height) {
+const wallGeometry = new BoxBufferGeometry(1, 1, 0.1);
+function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0) {
 	const WallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
 	WallMesh.scale.set(width, height, 1);
 	WallMesh.position.set(x, y, 0);
+	WallMesh.rotation.z = rotation;
 	const collider = world.createBody({
 		position: Physics.Vec2(x, y)
 	});
-	collider.createFixture(Physics.Box(width, height));
+	collider.createFixture(Physics.Box(width / 2, height, Physics.Vec2(0, 0), rotation));
 
 	WallMesh.physics = collider;
 	collider.mesh = WallMesh;
@@ -123,8 +124,14 @@ function createWall(x, y, width, height) {
 
 	scene.add(WallMesh);
 }
-scene.add(createWall(-7, 0, 0.25, 17));
-scene.add(createWall(+7.5, 0, 0.25, 17));
+scene.add(createWall(-7, 0, 0.25, 17)); //left wall
+scene.add(createWall(+7.5, 0, 0.25, 17)); //right wall
+
+
+// idle walls outside board
+scene.add(createWall(-10, 0 + 4, 3, 0.5, -0.5));
+scene.add(createWall(-8.5, -3 + 4, 3, 0.5, 0.5));
+scene.add(createWall(-12, -5 + 4, 5, 0.5, -0.5));
 
 const togglePegs = [];
 let toggledNumber = 0;
@@ -253,7 +260,7 @@ const inactiveBodies = [];
 let currentID = 0;
 
 function getBody() {
-	const pos = Physics.Vec2((Math.random() - 0.5) * 13.5, 12);
+	const pos = Physics.Vec2((Math.random() - 0.5) * 3 - 12, 12);
 	if (inactiveBodies.length === 0) {
 		const collider = world.createDynamicBody({
 			position: pos,
