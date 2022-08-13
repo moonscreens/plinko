@@ -116,7 +116,7 @@ function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0) {
 	const collider = world.createBody({
 		position: Physics.Vec2(x, y)
 	});
-	collider.createFixture(Physics.Box(width / 2, height, Physics.Vec2(0, 0), rotation));
+	collider.createFixture(Physics.Box(width / 2, height / 2, Physics.Vec2(0, 0), rotation));
 
 	WallMesh.physics = collider;
 	collider.mesh = WallMesh;
