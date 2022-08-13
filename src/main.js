@@ -55,13 +55,13 @@ const camera = new THREE.PerspectiveCamera(
 	1000
 );
 camera.position.z = 13;
-camera.position.x = -10;
+camera.position.x = 0;
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-scene.background = new THREE.Color(0x222222);
+scene.background = new THREE.Color(0x000000);
 
 function resize() {
 	camera.aspect = window.innerWidth / window.innerHeight;
@@ -87,9 +87,10 @@ scene.add(new THREE.AmbientLight(0x657576, 0.8));
 */
 
 const circleShape = Physics.Circle(0.25);
-const pegGeometry = new THREE.CylinderBufferGeometry(0.25, 0.4, 1, 16);
+const pegGeometry = new THREE.CylinderBufferGeometry(0.25, 0.3, 0.25, 16);
 pegGeometry.rotateX(Math.PI / 2);
 const pegMaterial = new THREE.MeshPhongMaterial({
+	color: 0xffffff,
 	shininess: 0,
 });
 const superBouncePegMaterial = new THREE.MeshPhongMaterial({
@@ -103,7 +104,9 @@ const noBouncePegMaterial = new THREE.MeshPhongMaterial({
 	shininess: 100,
 });
 
-const wallMaterial = new MeshPhongMaterial({});
+const wallMaterial = new MeshPhongMaterial({
+	color: 0x777777,
+});
 const wallGeometry = new BoxBufferGeometry(1, 1, 1);
 function createWall(x, y, width, height) {
 	const WallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
@@ -121,7 +124,7 @@ function createWall(x, y, width, height) {
 	scene.add(WallMesh);
 }
 scene.add(createWall(-7, 0, 0.25, 17));
-scene.add(createWall(+7, 0, 0.25, 17));
+scene.add(createWall(+7.5, 0, 0.25, 17));
 
 const togglePegs = [];
 let toggledNumber = 0;
