@@ -1,5 +1,5 @@
-import { CircleBufferGeometry, Group, Mesh, MeshBasicMaterial, MeshNormalMaterial, Vector3 } from "three";
-import { addTwistBetweenVectors, animateVector } from "./util";
+import { CircleBufferGeometry, Group, Mesh, MeshBasicMaterial, MeshNormalMaterial, PlaneBufferGeometry, RepeatWrapping, TextureLoader, Vector3 } from "three";
+import { addTwistBetweenVectors, animateVector, nearestNeighborify } from "./util";
 import { world } from "./physics";
 
 const spots = {
@@ -20,67 +20,70 @@ const spots = {
 		head: new Vector3(0, 0, -1),
 		mainHand: new Vector3(2, 1, 0),
 		offHand: new Vector3(-3, -1, -1.2),
-	}
-}
-let activeSpot = 'dropping';
+	},
+};
+let activeSpot = "dropping";
 const objKeys = Object.keys(spots);
 setInterval(() => {
 	activeSpot = objKeys[Math.floor(Math.random() * objKeys.length)];
 
-	animateVector(
-		group.position,
-		addTwistBetweenVectors(group.position, spots[activeSpot].all),
-		3000,
-	);
+	animateVector(group.position, addTwistBetweenVectors(group.position, spots[activeSpot].all), 3000);
 }, 3000);
 
 const group = new Group();
 
 export default group;
 
-const head = new Mesh(new CircleBufferGeometry(4, 32), new MeshBasicMaterial({ color: 0x555555 }));
+const loader = new TextureLoader();
+
+const head = new Mesh(
+	new PlaneBufferGeometry(6, 6),
+	new MeshBasicMaterial({
+		map: loader.load("/face.png"),
+		transparent: true,
+	})
+);
 group.add(head);
-const mainHand = new Mesh(new CircleBufferGeometry(1.5, 16), new MeshBasicMaterial({ color: 0xffeedd }));
+
+const handGeometry = new PlaneBufferGeometry(2.25, 2.25);
+const mainHand = new Mesh(
+	handGeometry,
+	new MeshBasicMaterial({
+		map: loader.load("/hand.png"),
+		transparent: true,
+	})
+);
 group.add(mainHand);
-const offHand = new Mesh(new CircleBufferGeometry(1.5, 16), new MeshNormalMaterial());
+mainHand.material.map.wrapS = RepeatWrapping;
+mainHand.material.map.repeat.x = -1;
+
+const offHand = new Mesh(
+	handGeometry,
+	new MeshBasicMaterial({
+		map: loader.load("/hand.png"),
+		transparent: true,
+	})
+);
 group.add(offHand);
+
+nearestNeighborify(head.material.map);
+nearestNeighborify(mainHand.material.map);
+nearestNeighborify(offHand.material.map);
 
 head.targetPos = new Vector3(0, 0, 0);
 mainHand.targetPos = new Vector3(0, 0, 0);
 offHand.targetPos = new Vector3(0, 0, 0);
 
-animateVector(
-	group.position,
-	[
-		head.targetPos.clone(),
-		new Vector3(0, -1, 0),
-		new Vector3(-3, 0, 0),
-		new Vector3(0, 1, 0),
-		new Vector3(3, 0, 0)
-	],
-	3000,
-);
+animateVector(group.position, [head.targetPos.clone(), new Vector3(0, -1, 0), new Vector3(-3, 0, 0), new Vector3(0, 1, 0), new Vector3(3, 0, 0)], 3000);
 
 animateVector(head.targetPos, [head.targetPos.clone(), spots.idle.head], 1000);
 animateVector(mainHand.targetPos, [mainHand.targetPos.clone(), spots.idle.mainHand], 1000);
 animateVector(offHand.targetPos, [offHand.targetPos.clone(), spots.idle.offHand], 1000);
 
 group.tick = function tick(delta) {
-	head.position.set(
-		head.targetPos.x,
-		head.targetPos.y + Math.sin(performance.now() / 1500) * 0.4,
-		head.targetPos.z
-	);
+	head.position.set(head.targetPos.x, head.targetPos.y + Math.sin(performance.now() / 1500) * 0.4, head.targetPos.z);
 
-	mainHand.position.set(
-		mainHand.targetPos.x,
-		mainHand.targetPos.y + Math.sin(performance.now() / 1000 + 100) * 0.25,
-		mainHand.targetPos.z
-	);
+	mainHand.position.set(mainHand.targetPos.x, mainHand.targetPos.y + Math.sin(performance.now() / 1000 + 100) * 0.25, mainHand.targetPos.z);
 
-	offHand.position.set(
-		offHand.targetPos.x,
-		offHand.targetPos.y + Math.sin(performance.now() / 900 + 300) * 0.25,
-		offHand.targetPos.z
-	);
-}
+	offHand.position.set(offHand.targetPos.x, offHand.targetPos.y + Math.sin(performance.now() / 900 + 300) * 0.25, offHand.targetPos.z);
+};

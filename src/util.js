@@ -1,4 +1,4 @@
-import { CatmullRomCurve3, Vector2, Vector3 } from "three";
+import { CatmullRomCurve3, NearestFilter, Vector2, Vector3 } from "three";
 import { lerp } from "three/src/math/MathUtils";
 
 const easeInOutSine = (x) => {
@@ -97,4 +97,11 @@ export const addTwistBetweenVectors = (a, b) => {
 	}
 
 	return vec2Array;
+}
+
+
+export const nearestNeighborify = (texture) => {
+	console.log(texture)
+	texture.minFilter = NearestFilter;
+	texture.magFilter = NearestFilter;
 }
