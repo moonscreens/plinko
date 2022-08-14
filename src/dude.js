@@ -1,5 +1,7 @@
 import { CircleBufferGeometry, Group, Mesh, MeshBasicMaterial, MeshNormalMaterial, Vector3 } from "three";
 import { world } from "./physics";
+import { animateVector } from "./util";
+
 
 const spots = {
 	idle: {
@@ -12,7 +14,7 @@ const spots = {
 		all: new Vector3(-8, -2, 0),
 		head: new Vector3(0, 0, -1),
 		mainHand: new Vector3(3, -2, 0),
-		offHand: new Vector3(-3, -2,  -1.5),
+		offHand: new Vector3(-3, -2, -1.5),
 	},
 	dropping: {
 		all: new Vector3(-2, 5, 0),
@@ -50,28 +52,35 @@ scene.add(mainHand);
 const offHand = new Mesh(new CircleBufferGeometry(1.5, 16), new MeshNormalMaterial());
 scene.add(offHand);
 
-head.targetPos = new Vector3(0, 100, 0);
-mainHand.targetPos = new Vector3(0, 100, 0);
-offHand.targetPos = new Vector3(0, 100, 0);
+head.targetPos = new Vector3(0, 0, 0);
+mainHand.targetPos = new Vector3(0, 0, 0);
+offHand.targetPos = new Vector3(0, 0, 0);
 
+animateVector(
+	head.targetPos,
+	[
+		head.targetPos.clone(),
+		new Vector3(0, -1, 0),
+		new Vector3(-3, 0, 0),
+		new Vector3(0, 1, 0),
+		new Vector3(3, 0, 0)
+	],
+	10000,
+);
 
 scene.tick = function tick(delta) {
-	head.targetPos.lerp(spots[activeSpot].head, delta);
 	head.position.set(
 		head.targetPos.x,
 		head.targetPos.y + Math.sin(performance.now() / 1500) * 0.4,
 		head.targetPos.z
 	);
 
-
-	mainHand.targetPos.lerp(spots[activeSpot].mainHand, delta);
 	mainHand.position.set(
 		mainHand.targetPos.x,
 		mainHand.targetPos.y + Math.sin(performance.now() / 1000 + 100) * 0.25,
 		mainHand.targetPos.z
 	);
 
-	offHand.targetPos.lerp(spots[activeSpot].offHand, delta);
 	offHand.position.set(
 		offHand.targetPos.x,
 		offHand.targetPos.y + Math.sin(performance.now() / 900 + 300) * 0.25,
