@@ -124,14 +124,14 @@ function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, specialBo
 
 	scene.add(WallMesh);
 }
-scene.add(createWall(-7, 0, 0.25, 17)); //left wall
-scene.add(createWall(+7.5, 0, 0.25, 17)); //right wall
+createWall(-7, 0, 0.25, 17); //left wall
+createWall(+7.5, 0, 0.25, 17); //right wall
 
 
 // idle walls outside board
-scene.add(createWall(-10, 0 + 4, 3, 0.5, -0.5, false));
-scene.add(createWall(-8.3, -3 + 4, 3, 0.5, 0.5, false));
-scene.add(createWall(-12, -5 + 4, 5, 0.5, -0.5, false));
+createWall(-10, 0 + 4, 3, 0.5, -0.5, false);
+createWall(-8.3, -3 + 4, 3, 0.5, 0.5, false);
+createWall(-12, -5 + 4, 5, 0.5, -0.5, false);
 
 const togglePegs = [];
 let toggledNumber = 0;

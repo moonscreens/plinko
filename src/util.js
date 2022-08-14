@@ -62,45 +62,38 @@ export const animateVector = (target, input_keyframes = [], duration = 1000) => 
 }
 
 
+const a2 = new Vector2();
+const b2 = new Vector2();
 export const addTwistBetweenVectors = (a, b) => {
-	const a2 = new Vector2(a.x, a.y);
-	const b2 = new Vector2(b.x, b.y);
+	a2.x = a.x;
+	a2.y = a.y;
+
+	b2.x = b.x;
+	b2.y = b.y;
 	const distance = a2.distanceTo(b2);
 
 	const angleHelper = a2.clone().sub(b2);
-	const angle = Math.atan2(angleHelper.x, angleHelper.y);
-
-	const halfway = new Vector2().lerpVectors(a2, b2, 0.5);
-
-	console.log(distance);
-
+	const angle = angleHelper.angle();
 
 	const vec2Array = [
 		a2,
 
-		new Vector2(
-			halfway.x + Math.sin(angle + Math.PI / 2) * (distance * 0.25),
-			halfway.y + Math.cos(angle + Math.PI / 2) * (distance * 0.25)
-		),
-		new Vector2(
-			halfway.x + Math.sin(angle) * (distance * 0.25),
-			halfway.y + Math.cos(angle) * (distance * 0.25)
-		),
-		new Vector2(
-			halfway.x + Math.sin(angle - Math.PI / 2) * (distance * 0.25),
-			halfway.y + Math.cos(angle - Math.PI / 2) * (distance * 0.25)
-		),
-		new Vector2(
-			halfway.x + Math.sin(-angle) * (distance * 0.25),
-			halfway.y + Math.cos(-angle) * (distance * 0.25)
-		),
+		new Vector2().lerpVectors(a2, b2, 0.3).add(new Vector2(
+			Math.sin(angle + Math.PI / 2) * (distance * 0.1),
+			Math.cos(angle + Math.PI / 2) * (distance * 0.1)
+		)),
+
+		new Vector2().lerpVectors(a2, b2, 0.7).add(new Vector2(
+			Math.sin(angle - Math.PI / 2) * (distance * 0.1),
+			Math.cos(angle - Math.PI / 2) * (distance * 0.1)
+		)),
 
 		b2,
 	]
 
 	for (let index = 0; index < vec2Array.length; index++) {
 		const element = vec2Array[index];
-		vec2Array[index] = new Vector3(element.x, element.y, lerp(a.z, b.z, index / (vec2Array.length-1)))
+		vec2Array[index] = new Vector3(element.x, element.y, lerp(a.z, b.z, index / (vec2Array.length - 1)))
 	}
 
 	return vec2Array;

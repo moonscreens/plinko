@@ -30,9 +30,9 @@ setInterval(() => {
 	animateVector(
 		group.position,
 		addTwistBetweenVectors(group.position, spots[activeSpot].all),
-		1000,
+		3000,
 	);
-}, 10000);
+}, 3000);
 
 const group = new Group();
 
@@ -58,7 +58,7 @@ animateVector(
 		new Vector3(0, 1, 0),
 		new Vector3(3, 0, 0)
 	],
-	10000,
+	3000,
 );
 
 animateVector(head.targetPos, [head.targetPos.clone(), spots.idle.head], 1000);
