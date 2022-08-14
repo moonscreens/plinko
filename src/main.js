@@ -108,7 +108,7 @@ const wallMaterial = new MeshPhongMaterial({
 	color: 0x777777,
 });
 const wallGeometry = new BoxBufferGeometry(1, 1, 0.1);
-function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0) {
+function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, specialBounce = true) {
 	const WallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
 	WallMesh.scale.set(width, height, 1);
 	WallMesh.position.set(x, y, 0);
@@ -120,7 +120,7 @@ function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0) {
 
 	WallMesh.physics = collider;
 	collider.mesh = WallMesh;
-	collider.objectType = 'wall';
+	if (specialBounce) collider.objectType = 'wall';
 
 	scene.add(WallMesh);
 }
@@ -129,9 +129,9 @@ scene.add(createWall(+7.5, 0, 0.25, 17)); //right wall
 
 
 // idle walls outside board
-scene.add(createWall(-10, 0 + 4, 3, 0.5, -0.5));
-scene.add(createWall(-8.3, -3 + 4, 3, 0.5, 0.5));
-scene.add(createWall(-12, -5 + 4, 5, 0.5, -0.5));
+scene.add(createWall(-10, 0 + 4, 3, 0.5, -0.5, false));
+scene.add(createWall(-8.3, -3 + 4, 3, 0.5, 0.5, false));
+scene.add(createWall(-12, -5 + 4, 5, 0.5, -0.5, false));
 
 const togglePegs = [];
 let toggledNumber = 0;

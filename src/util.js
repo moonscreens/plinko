@@ -1,4 +1,5 @@
-import { CatmullRomCurve3, Vector3 } from "three";
+import { CatmullRomCurve3, Vector2, Vector3 } from "three";
+import { lerp } from "three/src/math/MathUtils";
 
 const easeInOutSine = (x) => {
 	return -(Math.cos(Math.PI * x) - 1) / 2;
@@ -46,7 +47,7 @@ export const animateVector = (target, input_keyframes = [], duration = 1000) => 
 		animationArray.push({
 			tick: (p) => {
 				//target.copy(lerpVectorArray(keyframes, easeInOutSine(p)));
-				target.copy(curve.getPoint(p));
+				target.copy(curve.getPoint(easeInOutSine(p)));
 				if (p >= 1) resolve();
 			},
 			keyframes,
@@ -58,4 +59,49 @@ export const animateVector = (target, input_keyframes = [], duration = 1000) => 
 	});
 
 	return promise;
+}
+
+
+export const addTwistBetweenVectors = (a, b) => {
+	const a2 = new Vector2(a.x, a.y);
+	const b2 = new Vector2(b.x, b.y);
+	const distance = a2.distanceTo(b2);
+
+	const angleHelper = a2.clone().sub(b2);
+	const angle = Math.atan2(angleHelper.x, angleHelper.y);
+
+	const halfway = new Vector2().lerpVectors(a2, b2, 0.5);
+
+	console.log(distance);
+
+
+	const vec2Array = [
+		a2,
+
+		new Vector2(
+			halfway.x + Math.sin(angle + Math.PI / 2) * (distance * 0.25),
+			halfway.y + Math.cos(angle + Math.PI / 2) * (distance * 0.25)
+		),
+		new Vector2(
+			halfway.x + Math.sin(angle) * (distance * 0.25),
+			halfway.y + Math.cos(angle) * (distance * 0.25)
+		),
+		new Vector2(
+			halfway.x + Math.sin(angle - Math.PI / 2) * (distance * 0.25),
+			halfway.y + Math.cos(angle - Math.PI / 2) * (distance * 0.25)
+		),
+		new Vector2(
+			halfway.x + Math.sin(-angle) * (distance * 0.25),
+			halfway.y + Math.cos(-angle) * (distance * 0.25)
+		),
+
+		b2,
+	]
+
+	for (let index = 0; index < vec2Array.length; index++) {
+		const element = vec2Array[index];
+		vec2Array[index] = new Vector3(element.x, element.y, lerp(a.z, b.z, index / (vec2Array.length-1)))
+	}
+
+	return vec2Array;
 }
