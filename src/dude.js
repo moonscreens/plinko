@@ -43,7 +43,7 @@ const spots = {
 		all: new Vector3(-2, 12, 0),
 		head: new Vector3(0, 0, -4),
 		mainHand: new Vector3(2, 1, 0),
-		offHand: new Vector3(-5, -1, -2),
+		offHand: new Vector3(-5, -2, -1.5),
 		run: (spot) => {
 			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
 			animateWithDip(offHand.targetPos, spot.offHand);
