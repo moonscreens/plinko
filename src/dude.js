@@ -4,20 +4,20 @@ import { world } from "./physics";
 
 const spots = {
 	idle: {
-		all: new Vector3(-8, -2, 0),
-		head: new Vector3(0, 0, -1),
+		all: new Vector3(-12, -2, 0),
+		head: new Vector3(0, 0, -4),
 		mainHand: new Vector3(3, -2, 0),
 		offHand: new Vector3(-3, -2, 0),
 	},
 	catching: {
-		all: new Vector3(-8, -2, 0),
-		head: new Vector3(0, 0, -1),
+		all: new Vector3(-12, -2, 0),
+		head: new Vector3(0, 0, -4),
 		mainHand: new Vector3(3, -2, 0),
 		offHand: new Vector3(-3, -2, -1.5),
 	},
 	dropping: {
-		all: new Vector3(-2, 5, 0),
-		head: new Vector3(0, 0, -1),
+		all: new Vector3(-2, 12, 0),
+		head: new Vector3(0, 0, -4),
 		mainHand: new Vector3(2, 1, 0),
 		offHand: new Vector3(-3, -1, -1.2),
 	},
@@ -37,7 +37,7 @@ export default group;
 const loader = new TextureLoader();
 
 const head = new Mesh(
-	new PlaneBufferGeometry(6, 6),
+	new PlaneBufferGeometry(7, 7),
 	new MeshBasicMaterial({
 		map: loader.load("/face.png"),
 		transparent: true,
@@ -45,7 +45,7 @@ const head = new Mesh(
 );
 group.add(head);
 
-const handGeometry = new PlaneBufferGeometry(2.25, 2.25);
+const handGeometry = new PlaneBufferGeometry(4, 4);
 const mainHand = new Mesh(
 	handGeometry,
 	new MeshBasicMaterial({
@@ -81,9 +81,20 @@ animateVector(mainHand.targetPos, [mainHand.targetPos.clone(), spots.idle.mainHa
 animateVector(offHand.targetPos, [offHand.targetPos.clone(), spots.idle.offHand], 1000);
 
 group.tick = function tick(delta) {
-	head.position.set(head.targetPos.x, head.targetPos.y + Math.sin(performance.now() / 1500) * 0.4, head.targetPos.z);
+	head.position.set(head.targetPos.x,
+		head.targetPos.y + Math.sin(performance.now() / 1500) * 0.4,
+		head.targetPos.z
+	);
 
-	mainHand.position.set(mainHand.targetPos.x, mainHand.targetPos.y + Math.sin(performance.now() / 1000 + 100) * 0.25, mainHand.targetPos.z);
+	mainHand.position.set(mainHand.targetPos.x,
+		mainHand.targetPos.y + Math.sin(performance.now() / 1000 + 100) * 0.25,
+		mainHand.targetPos.z
+	);
+	mainHand.rotation.z = Math.sin(performance.now() / 1200) * 0.2;
 
-	offHand.position.set(offHand.targetPos.x, offHand.targetPos.y + Math.sin(performance.now() / 900 + 300) * 0.25, offHand.targetPos.z);
+	offHand.position.set(offHand.targetPos.x,
+		offHand.targetPos.y + Math.sin(performance.now() / 900 + 300) * 0.25,
+		offHand.targetPos.z
+	);
+	offHand.rotation.z = Math.cos(performance.now() / 1000 + 100) * 0.2;
 };

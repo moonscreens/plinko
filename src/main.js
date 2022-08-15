@@ -231,6 +231,9 @@ function draw() {
 
 	dude.tick(delta);
 
+	camera.position.x = dude.position.x * 0.25;
+	camera.position.y = dude.position.y * 0.25;
+
 	renderer.render(scene, camera);
 	if (stats) stats.end();
 };
