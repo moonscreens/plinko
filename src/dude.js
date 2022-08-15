@@ -2,63 +2,64 @@ import { CircleBufferGeometry, Group, Mesh, MeshBasicMaterial, MeshNormalMateria
 import { addTwistBetweenVectors, animateVector, nearestNeighborify } from "./util";
 import { world } from "./physics";
 
+const dipVector = new Vector3(0, 0, -3) //dips hands into the background while moving
+const animateWithDip = (target, destination) => {
+	const dip = new Vector3().lerpVectors(target, destination, 0.5).add(dipVector);
+	animateVector(
+		target,
+		[
+			target,
+			dip,
+			dip,
+			destination,
+		],
+		3000
+	);
+}
+
 const spots = {
 	idle: {
 		all: new Vector3(-12, -2, 0),
 		head: new Vector3(0, 0, -4),
 		mainHand: new Vector3(3, -2, 0),
 		offHand: new Vector3(-3, -2, 0),
+		run: (spot) => {
+			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
+			animateWithDip(offHand.targetPos, spot.offHand);
+			animateWithDip(mainHand.targetPos, spot.mainHand);
+		},
 	},
 	catching: {
 		all: new Vector3(-12, -2, 0),
 		head: new Vector3(0, 0, -4),
 		mainHand: new Vector3(3, -2, 0),
 		offHand: new Vector3(-3, -2, -1.5),
+		run: (spot) => {
+			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
+
+		},
 	},
 	dropping: {
 		all: new Vector3(-2, 12, 0),
 		head: new Vector3(0, 0, -4),
 		mainHand: new Vector3(2, 1, 0),
-		offHand: new Vector3(-3, -1, -1.2),
+		offHand: new Vector3(-5, -1, -2),
+		run: (spot) => {
+			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
+			animateWithDip(offHand.targetPos, spot.offHand);
+			animateWithDip(mainHand.targetPos, spot.mainHand);
+		},
 	},
 };
 let activeSpot = "dropping";
 const objKeys = Object.keys(spots);
 let objKeyIndex = objKeys.length;
-const backgroundDip = new Vector3(0, 0, -3);
 setInterval(() => {
 	objKeyIndex++;
 	if (objKeyIndex >= objKeys.length) objKeyIndex = 0;
 	activeSpot = objKeys[objKeyIndex];
 
-	animateVector(group.position, addTwistBetweenVectors(group.position, spots[activeSpot].all), 3000);
-
-	if (activeSpot === 'dropping' || activeSpot === 'idle') {
-		animateVector(
-			offHand.targetPos,
-			[
-				offHand.targetPos.clone(),
-				offHand.targetPos.clone().add(backgroundDip),
-				offHand.targetPos.clone().add(backgroundDip),
-				offHand.targetPos.clone().add(backgroundDip),
-				offHand.targetPos.clone().add(backgroundDip),
-				offHand.targetPos.clone()
-			],
-			3000
-		);
-		animateVector(
-			mainHand.targetPos,
-			[
-				mainHand.targetPos.clone(),
-				mainHand.targetPos.clone().add(backgroundDip),
-				mainHand.targetPos.clone().add(backgroundDip),
-				mainHand.targetPos.clone().add(backgroundDip),
-				mainHand.targetPos.clone().add(backgroundDip),
-				mainHand.targetPos.clone()
-			],
-			3000
-		);
-	}
+	spots[activeSpot].run(spots[activeSpot]);
 }, 3000);
 
 const group = new Group();
