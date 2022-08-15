@@ -3,8 +3,12 @@ import * as THREE from "three";
 import Stats from "stats-js";
 import "./main.css";
 
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 
 import * as Physics from "planck";
+
+import { world } from "./physics";
+import { BoxBufferGeometry } from "three";
 
 /*
 ** connect to twitch chat
@@ -65,6 +69,11 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 scene.fog = new THREE.Fog(0x000000, camera.position.z, camera.position.z + 15);
 scene.background = new THREE.Color(0x000000);
 
+new RGBELoader().load('/fireplace_2k.hdr', function (texture) {
+	texture.mapping = THREE.EquirectangularReflectionMapping;
+	scene.environment = texture;
+})
+
 function resize() {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
@@ -89,7 +98,7 @@ scene.add(new THREE.AmbientLight(0x657576, 0.8));
 */
 
 const circleShape = Physics.Circle(0.25);
-const pegGeometry = new THREE.CylinderBufferGeometry(0.25, 0.3, 0.25, 16);
+const pegGeometry = new THREE.CylinderBufferGeometry(0.25, 0.25, 0.8, 16);
 pegGeometry.rotateX(Math.PI / 2);
 const pegMaterial = new THREE.MeshPhongMaterial({
 	color: 0xffffff,
@@ -106,10 +115,14 @@ const noBouncePegMaterial = new THREE.MeshPhongMaterial({
 	shininess: 100,
 });
 
-const wallMaterial = new MeshPhongMaterial({
-	color: 0x777777,
-});
-const wallGeometry = new BoxBufferGeometry(1, 1, 0.1);
+const wallMaterial = new THREE.MeshPhysicalMaterial({
+	transparent: true,
+	opacity: 0.4,
+	reflectivity: 1,
+	metalness: 1,
+	roughness: 0.25,
+})
+const wallGeometry = new BoxBufferGeometry(1, 1, 1);
 function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, specialBounce = true) {
 	const WallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
 	WallMesh.scale.set(width, height, 1);
@@ -128,6 +141,25 @@ function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, specialBo
 }
 createWall(-7, 0, 0.25, 17); //left wall
 createWall(+7.5, 0, 0.25, 17); //right wall
+
+const glass = new THREE.Mesh(
+	new THREE.PlaneBufferGeometry(14.5, 17),
+	new THREE.MeshPhysicalMaterial({
+		transparent: true,
+		opacity: 0.4,
+		reflectivity: 1,
+		metalness: 1,
+		roughness: 0.25,
+		side: THREE.DoubleSide,
+	})
+);
+glass.position.x += 0.25;
+glass.position.z += 0.49;
+//scene.add(glass);
+
+const backGlass = glass.clone();
+backGlass.position.z *= -1;
+scene.add(backGlass);
 
 
 // idle walls outside board
@@ -384,6 +416,5 @@ world.on('begin-contact', function (contact) {
 
 
 import dude from './dude.js';
-import { world } from "./physics";
-import { BoxBufferGeometry, MeshPhongMaterial } from "three";
+import { testbed } from "planck";
 scene.add(dude);
