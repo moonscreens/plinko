@@ -6,7 +6,7 @@ const easeInOutSine = (x) => {
 }
 
 const dummyVec = new Vector3();
-const lerpVectorArray = (vectors = [], progress) => {
+export const lerpVectorArray = (vectors = [], progress) => {
 	const stepSize = 1 / vectors.length;
 
 	for (let index = 1; index < vectors.length; index++) {
@@ -18,7 +18,6 @@ const lerpVectorArray = (vectors = [], progress) => {
 			);
 		}
 	}
-	console.log(progress);
 }
 
 const animationArray = [];
@@ -101,7 +100,6 @@ export const addTwistBetweenVectors = (a, b) => {
 
 
 export const nearestNeighborify = (texture) => {
-	console.log(texture)
 	texture.minFilter = NearestFilter;
 	texture.magFilter = NearestFilter;
 }

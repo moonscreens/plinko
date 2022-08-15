@@ -57,10 +57,12 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.z = 13;
 camera.position.x = 0;
 
+
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
+scene.fog = new THREE.Fog(0x000000, camera.position.z, camera.position.z + 15);
 scene.background = new THREE.Color(0x000000);
 
 function resize() {

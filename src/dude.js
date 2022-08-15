@@ -24,10 +24,37 @@ const spots = {
 };
 let activeSpot = "dropping";
 const objKeys = Object.keys(spots);
+let objKeyIndex = objKeys.length;
+const backgroundDip = new Vector3(0, 0, -3);
 setInterval(() => {
-	activeSpot = objKeys[Math.floor(Math.random() * objKeys.length)];
+	objKeyIndex++;
+	if (objKeyIndex >= objKeys.length) objKeyIndex = 0;
+	activeSpot = objKeys[objKeyIndex];
 
 	animateVector(group.position, addTwistBetweenVectors(group.position, spots[activeSpot].all), 3000);
+
+	if (activeSpot === 'dropping' || activeSpot === 'idle') {
+		animateVector(
+			offHand.targetPos,
+			[
+				offHand.targetPos.clone(),
+				offHand.targetPos.clone().add(backgroundDip),
+				offHand.targetPos.clone().add(backgroundDip),
+				offHand.targetPos.clone()
+			],
+			3000
+		);
+		animateVector(
+			mainHand.targetPos,
+			[
+				mainHand.targetPos.clone(),
+				mainHand.targetPos.clone().add(backgroundDip),
+				mainHand.targetPos.clone().add(backgroundDip),
+				mainHand.targetPos.clone()
+			],
+			3000
+		);
+	}
 }, 3000);
 
 const group = new Group();
