@@ -117,10 +117,10 @@ const noBouncePegMaterial = new THREE.MeshPhongMaterial({
 
 const wallMaterial = new THREE.MeshPhysicalMaterial({
 	transparent: true,
-	opacity: 0.4,
+	opacity: 0.5,
 	reflectivity: 1,
 	metalness: 1,
-	roughness: 0.25,
+	roughness: 0.6,
 })
 const wallGeometry = new BoxBufferGeometry(1, 1, 1);
 function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, specialBounce = true) {
@@ -143,13 +143,13 @@ createWall(-7, 0, 0.25, 17); //left wall
 createWall(+7.5, 0, 0.25, 17); //right wall
 
 const glass = new THREE.Mesh(
-	new THREE.PlaneBufferGeometry(14.5, 17),
+	new THREE.PlaneBufferGeometry(14.25, 17),
 	new THREE.MeshPhysicalMaterial({
 		transparent: true,
 		opacity: 0.4,
 		reflectivity: 1,
 		metalness: 1,
-		roughness: 0.25,
+		roughness: 0.4,
 		side: THREE.DoubleSide,
 	})
 );
