@@ -19,7 +19,7 @@ const animateWithDip = (target, destination) => {
 
 const spots = {
 	idle: {
-		all: new Vector3(-12, -2, 0),
+		all: new Vector3(-13, -4, 0),
 		head: new Vector3(0, 0, -4),
 		mainHand: new Vector3(3, -2, 0),
 		offHand: new Vector3(-3, -2, 0),
@@ -30,7 +30,7 @@ const spots = {
 		},
 	},
 	catching: {
-		all: new Vector3(-12, -2, 0),
+		all: new Vector3(-13, -3, 0),
 		head: new Vector3(0, 0, -4),
 		mainHand: new Vector3(3, -2, 0),
 		offHand: new Vector3(-3, -2, -1.5),
@@ -102,11 +102,11 @@ nearestNeighborify(head.material.map);
 nearestNeighborify(mainHand.material.map);
 nearestNeighborify(offHand.material.map);
 
-head.targetPos = new Vector3(0, 0, 0);
-mainHand.targetPos = new Vector3(0, 0, 0);
-offHand.targetPos = new Vector3(0, 0, 0);
+head.targetPos = new Vector3(0, 0, -10);
+mainHand.targetPos = new Vector3(0, 0, -10);
+offHand.targetPos = new Vector3(0, 0, -10);
 
-animateVector(group.position, [head.targetPos.clone(), new Vector3(0, -1, 0), new Vector3(-3, 0, 0), new Vector3(0, 1, 0), new Vector3(3, 0, 0)], 3000);
+animateVector(group.position, [new Vector3(0, 0, -3), new Vector3(0, -1, -3), new Vector3(-3, 0, -3), new Vector3(0, 1, -2), new Vector3(3, 0, -2)], 3000);
 
 animateVector(head.targetPos, [head.targetPos.clone(), spots.idle.head], 1000);
 animateVector(mainHand.targetPos, [mainHand.targetPos.clone(), spots.idle.mainHand], 1000);
