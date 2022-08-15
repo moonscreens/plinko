@@ -3,7 +3,7 @@ import { addTwistBetweenVectors, animateVector, nearestNeighborify } from "./uti
 import { world } from "./physics";
 
 const dipVector = new Vector3(0, 0, -3) //dips hands into the background while moving
-const animateWithDip = (target, destination) => {
+const animateWithDip = (target, destination, duration = 3000) => {
 	const dip = new Vector3().lerpVectors(target, destination, 0.5).add(dipVector);
 	animateVector(
 		target,
@@ -13,7 +13,7 @@ const animateWithDip = (target, destination) => {
 			dip,
 			destination,
 		],
-		3000
+		duration
 	);
 }
 
@@ -32,18 +32,20 @@ const spots = {
 	catching: {
 		all: new Vector3(-13, -3, 0),
 		head: new Vector3(0, 0, -4),
-		mainHand: new Vector3(3, -2, 0),
+		mainHand: new Vector3(4, -2, 0),
 		offHand: new Vector3(-3, -2, -1.5),
 		run: (spot) => {
 			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
 			animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, -Math.PI)], 1000);
+			animateVector(offHand.targetPos, [offHand.targetPos, spot.offHand], 3000);
+			animateVector(mainHand.targetPos, [mainHand.targetPos, spot.mainHand], 3000);
 		},
 	},
 	dropping: {
 		all: new Vector3(-2, 12, 0),
 		head: new Vector3(0, 0, -4),
-		mainHand: new Vector3(2, 1, 0),
-		offHand: new Vector3(-5, -2, -1.5),
+		mainHand: new Vector3(2, -1, 0),
+		offHand: new Vector3(-5, -3, -1.5),
 		run: (spot) => {
 			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
 			animateWithDip(offHand.targetPos, spot.offHand);
