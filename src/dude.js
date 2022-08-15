@@ -40,6 +40,8 @@ setInterval(() => {
 				offHand.targetPos.clone(),
 				offHand.targetPos.clone().add(backgroundDip),
 				offHand.targetPos.clone().add(backgroundDip),
+				offHand.targetPos.clone().add(backgroundDip),
+				offHand.targetPos.clone().add(backgroundDip),
 				offHand.targetPos.clone()
 			],
 			3000
@@ -48,6 +50,8 @@ setInterval(() => {
 			mainHand.targetPos,
 			[
 				mainHand.targetPos.clone(),
+				mainHand.targetPos.clone().add(backgroundDip),
+				mainHand.targetPos.clone().add(backgroundDip),
 				mainHand.targetPos.clone().add(backgroundDip),
 				mainHand.targetPos.clone().add(backgroundDip),
 				mainHand.targetPos.clone()
