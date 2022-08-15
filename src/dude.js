@@ -36,7 +36,7 @@ const spots = {
 		offHand: new Vector3(-3, -2, -1.5),
 		run: (spot) => {
 			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
-
+			animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, -Math.PI)], 1000);
 		},
 	},
 	dropping: {
@@ -48,6 +48,9 @@ const spots = {
 			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
 			animateWithDip(offHand.targetPos, spot.offHand);
 			animateWithDip(mainHand.targetPos, spot.mainHand);
+			setTimeout(() => {
+				animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, 0)], 1000);
+			}, 3000)
 		},
 	},
 };
@@ -60,7 +63,7 @@ setInterval(() => {
 	activeSpot = objKeys[objKeyIndex];
 
 	spots[activeSpot].run(spots[activeSpot]);
-}, 3000);
+}, 4000);
 
 const group = new Group();
 
@@ -104,7 +107,9 @@ nearestNeighborify(offHand.material.map);
 
 head.targetPos = new Vector3(0, 0, -10);
 mainHand.targetPos = new Vector3(0, 0, -10);
+mainHand.targetRot = new Vector3(0, 0, 0);
 offHand.targetPos = new Vector3(0, 0, -10);
+offHand.targetRot = new Vector3(0, 0, 0);
 
 animateVector(group.position, [new Vector3(0, 0, -3), new Vector3(0, -1, -3), new Vector3(-3, 0, -3), new Vector3(0, 1, -2), new Vector3(3, 0, -2)], 3000);
 
@@ -122,11 +127,19 @@ group.tick = function tick(delta) {
 		mainHand.targetPos.y + Math.sin(performance.now() / 1000 + 100) * 0.25,
 		mainHand.targetPos.z
 	);
-	mainHand.rotation.z = Math.sin(performance.now() / 1200) * 0.2;
+	mainHand.rotation.set(
+		mainHand.targetRot.x,
+		mainHand.targetRot.y,
+		mainHand.targetRot.z + Math.sin(performance.now() / 1200) * 0.2
+	);
 
 	offHand.position.set(offHand.targetPos.x,
 		offHand.targetPos.y + Math.sin(performance.now() / 900 + 300) * 0.25,
 		offHand.targetPos.z
 	);
-	offHand.rotation.z = Math.cos(performance.now() / 1000 + 100) * 0.2;
+	offHand.rotation.set(
+		offHand.targetRot.x,
+		offHand.targetRot.y,
+		offHand.targetRot.z + Math.cos(performance.now() / 1000 + 100) * 0.2
+	);
 };
