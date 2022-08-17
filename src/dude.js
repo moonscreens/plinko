@@ -57,13 +57,13 @@ const spots = {
 					group.position.clone().add(new Vector3(-10, 3, 0)),
 					group.position.clone().add(new Vector3(-9, 15, 0)),
 					spot.all
-				], 3000).then(() => {
+				], 5000).then(() => {
 					animateWithDip(offHand.targetPos, spot.offHand);
 					animateWithDip(mainHand.targetPos, spot.mainHand);
 					setTimeout(() => {
 						animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, 0)], 1000);
 						handBody.setActive(false);
-					}, 3000)
+					}, 4000)
 				})
 		},
 	},
