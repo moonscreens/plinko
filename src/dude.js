@@ -1,6 +1,7 @@
 import { CircleBufferGeometry, Group, Mesh, MeshBasicMaterial, MeshNormalMaterial, PlaneBufferGeometry, RepeatWrapping, TextureLoader, Vector3 } from "three";
 import { addTwistBetweenVectors, animateVector, nearestNeighborify } from "./util";
 import { world } from "./physics";
+import * as Physics from "planck";
 
 const dipVector = new Vector3(0, 0, -3) //dips hands into the background while moving
 const animateWithDip = (target, destination, duration = 3000) => {
@@ -35,6 +36,7 @@ const spots = {
 		mainHand: new Vector3(4, -2, 0),
 		offHand: new Vector3(-3, -2, -1.5),
 		run: (spot) => {
+			handBody.setActive(true);
 			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
 			animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, -Math.PI)], 1000);
 			animateVector(offHand.targetPos, [offHand.targetPos, spot.offHand], 3000);
@@ -47,12 +49,22 @@ const spots = {
 		mainHand: new Vector3(2, -1, 0),
 		offHand: new Vector3(-5, -3, -1.5),
 		run: (spot) => {
-			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
-			animateWithDip(offHand.targetPos, spot.offHand);
-			animateWithDip(mainHand.targetPos, spot.mainHand);
-			setTimeout(() => {
-				animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, 0)], 1000);
-			}, 3000)
+			animateVector(
+				group.position,
+				[
+					group.position,
+					group.position.clone().add(new Vector3(-5, 1, 0)),
+					group.position.clone().add(new Vector3(-10, 3, 0)),
+					group.position.clone().add(new Vector3(-9, 15, 0)),
+					spot.all
+				], 3000).then(() => {
+					animateWithDip(offHand.targetPos, spot.offHand);
+					animateWithDip(mainHand.targetPos, spot.mainHand);
+					setTimeout(() => {
+						animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, 0)], 1000);
+						handBody.setActive(false);
+					}, 3000)
+				})
 		},
 	},
 };
@@ -65,7 +77,7 @@ setInterval(() => {
 	activeSpot = objKeys[objKeyIndex];
 
 	spots[activeSpot].run(spots[activeSpot]);
-}, 4000);
+}, 10000);
 
 const group = new Group();
 
@@ -93,6 +105,15 @@ const mainHand = new Mesh(
 group.add(mainHand);
 mainHand.material.map.wrapS = RepeatWrapping;
 mainHand.material.map.repeat.x = -1;
+
+const handBody = world.createBody({
+	position: Physics.Vec2(0, 0),
+	type: 'kinematic',
+});
+handBody.createFixture(Physics.Box(1.5, 0.5, Physics.Vec2(0, 0), 0));
+handBody.createFixture(Physics.Box(0.25, 1, Physics.Vec2(-1.75, 0.5), 0));
+handBody.createFixture(Physics.Box(0.25, 1, Physics.Vec2(1.75, 0.5), 0));
+handBody.setActive(false);
 
 const offHand = new Mesh(
 	handGeometry,
@@ -134,6 +155,13 @@ group.tick = function tick(delta) {
 		mainHand.targetRot.y,
 		mainHand.targetRot.z + Math.sin(performance.now() / 1200) * 0.2
 	);
+
+	const pos = handBody.getPosition();
+	const worldPos = new Vector3();
+	mainHand.getWorldPosition(worldPos);
+	pos.x = worldPos.x;
+	pos.y = worldPos.y;
+	handBody.setPosition(pos);
 
 	offHand.position.set(offHand.targetPos.x,
 		offHand.targetPos.y + Math.sin(performance.now() / 900 + 300) * 0.25,
