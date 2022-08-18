@@ -10,3 +10,27 @@ canvas {
 	margin: 0;
 	overflow: hidden;
 }
+
+.devWrapper {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	background-color: rgba(0,100,100,0.5);
+	padding: 1em;
+	border-radius: 1em 0 0 0;
+	color: white;
+	font-family: sans-serif;
+}
+.devWrapper label {
+	margin-right: 1em;
+}
+.inputWrap {
+	margin: 0.5em 0;
+}
+
+body > img {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 10%;
+}

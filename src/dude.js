@@ -85,7 +85,7 @@ export default group;
 
 const loader = new TextureLoader();
 
-const head = new Mesh(
+export const head = new Mesh(
 	new PlaneBufferGeometry(7, 7),
 	new MeshBasicMaterial({
 		map: loader.load("/face.png"),
@@ -95,7 +95,7 @@ const head = new Mesh(
 group.add(head);
 
 const handGeometry = new PlaneBufferGeometry(4, 4);
-const mainHand = new Mesh(
+export const mainHand = new Mesh(
 	handGeometry,
 	new MeshBasicMaterial({
 		map: loader.load("/hand.png"),
@@ -115,7 +115,7 @@ handBody.createFixture(Physics.Box(0.25, 1, Physics.Vec2(-1.75, 0.5), 0));
 handBody.createFixture(Physics.Box(0.25, 1, Physics.Vec2(1.75, 0.5), 0));
 handBody.setActive(false);
 
-const offHand = new Mesh(
+export const offHand = new Mesh(
 	handGeometry,
 	new MeshBasicMaterial({
 		map: loader.load("/hand.png"),

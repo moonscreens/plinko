@@ -35,6 +35,10 @@ if (query_vars.stats) {
 	document.body.appendChild(stats.dom);
 }
 
+if (query_vars.dev) {
+	initDev();
+}
+
 const ChatInstance = new TwitchChat({
 	// If using planes, consider using MeshBasicMaterial instead of SpriteMaterial
 	materialType: THREE.MeshBasicMaterial,
@@ -417,4 +421,5 @@ world.on('begin-contact', function (contact) {
 
 import dude from './dude.js';
 import { testbed } from "planck";
+import { initDev } from "./dev";
 scene.add(dude);
