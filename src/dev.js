@@ -28,7 +28,7 @@ const createInput = (name, type, changeListener) => {
 }
 
 const setupTextureInput = (name, material) => {
-	const input = createInput(name + "image", 'file', (e) => {
+	const input = createInput(name, 'file', (e) => {
 		const image = new Image();
 		image.onload = () => {
 			const canvas = document.createElement('canvas');
