@@ -52,8 +52,7 @@ const spots = {
 			animateVector(
 				group.position,
 				[
-					group.position,
-					group.position.clone().add(new Vector3(-5, 1, 0)),
+					group.position.clone(),
 					group.position.clone().add(new Vector3(-10, 3, 0)),
 					group.position.clone().add(new Vector3(-9, 15, 0)),
 					spot.all

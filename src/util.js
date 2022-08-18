@@ -36,17 +36,18 @@ const animateTick = () => {
 window.requestAnimationFrame(animateTick);
 
 
-export const animateVector = (target, input_keyframes = [], duration = 1000) => {
-	let keyframes = Array.isArray(input_keyframes) ? input_keyframes : [input_keyframes];
+export const animateVector = (target, input_keyframes = [], duration = 1000, smooth = true) => {
+	let keyframes = Array.isArray(input_keyframes) ? input_keyframes : [target.clone(), input_keyframes];
 
-	//keyframes = [target.clone(), ...keyframes];
 	const curve = new CatmullRomCurve3(keyframes);
+	//const points = curve.getPoints(50);
 
 	const promise = new Promise((resolve, reject) => {
 		animationArray.push({
 			tick: (p) => {
-				//target.copy(lerpVectorArray(keyframes, easeInOutSine(p)));
-				target.copy(curve.getPoint(easeInOutSine(p)));
+				if (smooth)target.copy(curve.getPoint(easeInOutSine(p)));
+				else target.copy(lerpVectorArray(keyframes, easeInOutSine(p)));
+				//target.copy(curve.getPoint(easeInOutSine(p)));
 				if (p >= 1) resolve();
 			},
 			keyframes,
