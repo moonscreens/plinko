@@ -18,6 +18,9 @@ const createInput = (name, type, changeListener) => {
 	const input = document.createElement('input');
 	input.type = type;
 	input.id = id;
+	if (type === 'file') {
+		input.accept = 'image/png, image/jpeg, image/apng, image/avif, image/gif, image/svg+xml, image/webp'
+	}
 	wrapper.appendChild(input);
 
 	if (changeListener) {
