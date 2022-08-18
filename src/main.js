@@ -167,9 +167,10 @@ scene.add(backGlass);
 
 
 // idle walls outside board
-createWall(-10, 0 + 4, 3, 0.5, -0.5, false);
-createWall(-8.3, -3 + 4, 3, 0.5, 0.5, false);
-createWall(-12, -5 + 4, 5, 0.5, -0.5, false);
+createWall(-15 + 0.526, 0 + 4, 2, 0.5, -Math.PI/4, false);
+createWall(-15 - 0.526, 0 + 4, 2, 0.5, +Math.PI/4, false);
+createWall(-15 + 3.5, -5 + 4, 5, 0.5, +0.5, false);
+createWall(-15 - 3.5, -5 + 4, 5, 0.5, -0.5, false);
 
 const togglePegs = [];
 let toggledNumber = 0;
@@ -301,7 +302,7 @@ const inactiveBodies = [];
 let currentID = 0;
 
 function getBody() {
-	const pos = Physics.Vec2((Math.random() - 0.5) * 3 - 12, 12);
+	const pos = Physics.Vec2((Math.random() - 0.5) * 3 - 15, 12);
 	if (inactiveBodies.length === 0) {
 		const collider = world.createDynamicBody({
 			position: pos,

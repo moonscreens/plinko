@@ -20,7 +20,7 @@ const animateWithDip = (target, destination, duration = 3000) => {
 
 const spots = {
 	idle: {
-		all: new Vector3(-13, -4, 0),
+		all: new Vector3(-16, -4, 0),
 		head: new Vector3(0, 0, -4),
 		mainHand: new Vector3(3, -2, 0),
 		offHand: new Vector3(-3, -2, 0),
@@ -31,7 +31,7 @@ const spots = {
 		},
 	},
 	catching: {
-		all: new Vector3(-13, -3, 0),
+		all: new Vector3(-19, -5, 0),
 		head: new Vector3(0, 0, -4),
 		mainHand: new Vector3(4, -2, 0),
 		offHand: new Vector3(-3, -2, -1.5),
@@ -54,7 +54,7 @@ const spots = {
 				[
 					group.position.clone(),
 					group.position.clone().add(new Vector3(-10, 3, 0)),
-					group.position.clone().add(new Vector3(-9, 15, 0)),
+					group.position.clone().add(new Vector3(-10, 15, 0)),
 					spot.all
 				], 5000).then(() => {
 					animateWithDip(offHand.targetPos, spot.offHand);
