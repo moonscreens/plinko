@@ -104,3 +104,8 @@ export const nearestNeighborify = (texture) => {
 	texture.minFilter = NearestFilter;
 	texture.magFilter = NearestFilter;
 }
+
+export const LAYERS = {
+	default: 0,
+	bloom: 1,
+}

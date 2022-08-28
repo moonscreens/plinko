@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import * as Physics from "planck";
 import { world } from "./physWorld";
+import { LAYERS } from "./util";
 
 export const board = new THREE.Group();
 
@@ -85,6 +86,10 @@ export function createPeg(x, y, options = {}) {
 
 	const PegMesh = new THREE.Mesh(pegGeometry, mat);
 	PegMesh.position.set(x, y, 0);
+	if (options.superbounce) {
+		PegMesh.layers.toggle(LAYERS.bloom);
+	}
+
 	const collider = world.createBody({
 		position: Physics.Vec2(x, y)
 	});
