@@ -30,8 +30,22 @@ const createInput = (name, type, changeListener) => {
 	return wrapper;
 }
 
+const containers = {};
+const getContainer = (name) => {
+	if (!containers[name]) {
+		containers[name] = document.createElement('div');
+
+		const title = document.createElement('h3');
+		title.textContent = name;
+		containers[name].appendChild(title);
+
+		devWrapper.appendChild(containers[name]);
+	}
+	return containers[name];
+}
+
 const setupTextureInput = (name, material) => {
-	const input = createInput(name, 'file', (e) => {
+	const input = createInput('texture:', 'file', (e) => {
 		const image = new Image();
 		image.onload = () => {
 			const canvas = document.createElement('canvas');
@@ -46,7 +60,7 @@ const setupTextureInput = (name, material) => {
 		image.src = URL.createObjectURL(e.target.files[0]);
 		console.log(image.src);
 	});
-	devWrapper.appendChild(input);
+	getContainer(name).appendChild(input);
 }
 
 export const initDev = () => {
