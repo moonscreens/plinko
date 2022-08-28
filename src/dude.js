@@ -1,6 +1,6 @@
 import { CircleBufferGeometry, Group, Mesh, MeshBasicMaterial, MeshNormalMaterial, PlaneBufferGeometry, RepeatWrapping, TextureLoader, Vector3 } from "three";
 import { addTwistBetweenVectors, animateVector, nearestNeighborify } from "./util";
-import { world } from "./physics";
+import { world } from "./physWorld";
 import * as Physics from "planck";
 
 const dipVector = new Vector3(0, 0, -3) //dips hands into the background while moving

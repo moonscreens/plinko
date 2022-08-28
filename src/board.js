@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import * as Physics from "planck";
-import { world } from "./physics";
+import { world } from "./physWorld";
 
 export const board = new THREE.Group();
 
@@ -30,7 +30,7 @@ const wallMaterial = new THREE.MeshPhysicalMaterial({
 	roughness: 0.6,
 })
 const wallGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
-function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, specialBounce = true) {
+export function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, specialBounce = true) {
 	const WallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
 	WallMesh.scale.set(width, height, 1);
 	WallMesh.position.set(x, y, 0);
@@ -77,7 +77,7 @@ createWall(-15 - 3.5, -5 + 4, 5, 0.5, -0.5, false);
 
 const togglePegs = [];
 let toggledNumber = 0;
-function createPeg(x, y, options = {}) {
+export function createPeg(x, y, options = {}) {
 	let mat = pegMaterial;
 
 	if (options.superbounce) mat = superBouncePegMaterial;
@@ -101,7 +101,7 @@ function createPeg(x, y, options = {}) {
 	}
 	board.add(PegMesh);
 }
-function hitPeg(collider) {
+export function hitPeg(collider) {
 	collider.setActive(false);
 	collider.mesh.scale.setScalar(0.25);
 
