@@ -73,11 +73,11 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-const params = {
+const bloomSettings = {
 	exposure: 1,
-	bloomStrength: 5,
-	bloomThreshold: 0,
-	bloomRadius: 0,
+	strength: 2,
+	threshold: 0,
+	radius: 0.1,
 	scene: 'Scene with Glow'
 };
 
@@ -87,9 +87,9 @@ bloomLayer.set(LAYERS.bloom);
 const renderScene = new RenderPass(scene, camera);
 
 const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-bloomPass.threshold = params.bloomThreshold;
-bloomPass.strength = params.bloomStrength;
-bloomPass.radius = params.bloomRadius;
+bloomPass.threshold = bloomSettings.threshold;
+bloomPass.strength = bloomSettings.strength;
+bloomPass.radius = bloomSettings.radius;
 
 const bloomComposer = new EffectComposer(renderer);
 bloomComposer.renderToScreen = false;
