@@ -62,7 +62,7 @@ const camera = new THREE.PerspectiveCamera(
 	1000
 );
 camera.position.z = 13;
-camera.position.x = 0;
+camera.position.x = -6;
 
 
 const scene = new THREE.Scene();
@@ -141,18 +141,23 @@ new RGBELoader().load('/fireplace_2k.hdr', function (texture) {
 })
 
 function resize() {
-	camera.aspect = window.innerWidth / window.innerHeight;
+	const width = window.innerWidth;
+	const height = window.innerHeight;
+	camera.aspect = width / height;
 	camera.updateProjectionMatrix();
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	bloomComposer.setSize(window.innerWidth, window.innerHeight);
-	finalComposer.setSize(window.innerWidth, window.innerHeight);
+	renderer.setSize(width, height);
+	bloomComposer.setSize(width, height);
+	finalComposer.setSize(width, height);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
 	window.addEventListener('resize', resize);
 	if (stats) document.body.appendChild(stats.dom);
 	document.body.appendChild(renderer.domElement);
-	draw();
+	window.requestAnimationFrame(()=>{
+		resize();
+		draw();
+	})
 })
 
 const sun = new THREE.DirectionalLight(0xffffff, 1);
@@ -194,8 +199,8 @@ function draw() {
 
 	dude.tick(delta);
 
-	camera.position.x = dude.position.x * 0.25;
-	camera.position.y = dude.position.y * 0.25;
+	//camera.position.x = dude.position.x * 0.25;
+	//camera.position.y = dude.position.y * 0.25;
 
 	// render scene with bloom
 	scene.traverse( darkenNonBloomed );
