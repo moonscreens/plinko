@@ -74,8 +74,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 const bloomSettings = {
-	exposure: 1,
-	strength: 1,
+	strength: 2,
 	threshold: 0,
 	radius: 0,
 	scene: 'Scene with Glow'

@@ -17,9 +17,9 @@ const pegMaterial = new THREE.MeshPhongMaterial({
 	shininess: 100,
 });
 const superBouncePegMaterial = new THREE.MeshPhongMaterial({
-	color: 0xff4422,
-	specular: 0xff0000,
-	shininess: 100,
+	color: 0x000000,
+	emissive: 0xff5522,
+	shininess: 0,
 });
 const noBouncePegMaterial = new THREE.MeshPhongMaterial({
 	color: 0x2277ff,
