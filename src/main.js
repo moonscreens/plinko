@@ -66,7 +66,7 @@ camera.position.x = 0;
 
 
 const scene = new THREE.Scene();
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ antialias: false });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -75,9 +75,9 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 const bloomSettings = {
 	exposure: 1,
-	strength: 2,
+	strength: 1,
 	threshold: 0,
-	radius: 0.1,
+	radius: 0,
 	scene: 'Scene with Glow'
 };
 

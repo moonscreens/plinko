@@ -1,4 +1,4 @@
-import { CircleBufferGeometry, Group, Mesh, MeshBasicMaterial, MeshNormalMaterial, PlaneBufferGeometry, RepeatWrapping, TextureLoader, Vector3 } from "three";
+import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry, RepeatWrapping, TextureLoader, Vector3 } from "three";
 import { addTwistBetweenVectors, animateVector, nearestNeighborify } from "./util";
 import { world } from "./physWorld";
 import * as Physics from "planck";

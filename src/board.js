@@ -8,9 +8,13 @@ export const board = new THREE.Group();
 export const pegShape = Physics.Circle(0.25);
 const pegGeometry = new THREE.CylinderBufferGeometry(0.25, 0.25, 0.8, 16);
 pegGeometry.rotateX(Math.PI / 2);
+
+const circleGeometry = new THREE.RingBufferGeometry(0.15, 0.2, 16, 1);
+circleGeometry.translate(0, 0, 0.401);
+
 const pegMaterial = new THREE.MeshPhongMaterial({
-	color: 0xffffff,
-	shininess: 0,
+	color: '#aaaaaa',
+	shininess: 100,
 });
 const superBouncePegMaterial = new THREE.MeshPhongMaterial({
 	color: 0xff4422,
@@ -71,8 +75,8 @@ board.add(backGlass);
 
 
 // idle walls outside board
-createWall(-15 + 0.526, 0 + 4, 2, 0.5, -Math.PI/4, false);
-createWall(-15 - 0.526, 0 + 4, 2, 0.5, +Math.PI/4, false);
+createWall(-15 + 0.526, 0 + 4, 2, 0.5, -Math.PI / 4, false);
+createWall(-15 - 0.526, 0 + 4, 2, 0.5, +Math.PI / 4, false);
 createWall(-15 + 3.5, -5 + 4, 5, 0.5, +0.5, false);
 createWall(-15 - 3.5, -5 + 4, 5, 0.5, -0.5, false);
 
@@ -81,13 +85,15 @@ let toggledNumber = 0;
 export function createPeg(x, y, options = {}) {
 	let mat = pegMaterial;
 
-	if (options.superbounce) mat = superBouncePegMaterial;
+	//if (options.superbounce) mat = superBouncePegMaterial;
 	if (options.nobounce) mat = noBouncePegMaterial;
 
 	const PegMesh = new THREE.Mesh(pegGeometry, mat);
 	PegMesh.position.set(x, y, 0);
 	if (options.superbounce) {
-		PegMesh.layers.toggle(LAYERS.bloom);
+		const CircleMesh = new THREE.Mesh(circleGeometry, superBouncePegMaterial);
+		CircleMesh.layers.toggle(LAYERS.bloom);
+		PegMesh.add(CircleMesh);
 	}
 
 	const collider = world.createBody({
