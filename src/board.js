@@ -2,6 +2,7 @@ import * as THREE from "three";
 import * as Physics from "planck";
 import { world } from "./physWorld";
 import { LAYERS } from "./util";
+import colors from "./colors";
 
 export const board = new THREE.Group();
 
@@ -9,21 +10,22 @@ export const pegShape = Physics.Circle(0.25);
 const pegGeometry = new THREE.CylinderBufferGeometry(0.25, 0.25, 0.8, 16);
 pegGeometry.rotateX(Math.PI / 2);
 
-const circleGeometry = new THREE.RingBufferGeometry(0.15, 0.2, 16, 1);
+const circleGeometry = new THREE.RingBufferGeometry(0.125, 0.24, 16, 1);
 circleGeometry.translate(0, 0, 0.401);
 
 const pegMaterial = new THREE.MeshPhongMaterial({
 	color: '#aaaaaa',
 	shininess: 100,
 });
+
 const superBouncePegMaterial = new THREE.MeshPhongMaterial({
-	color: 0x000000,
-	emissive: 0xff5522,
+	color: colors.red,
+	emissive: colors.red,
 	shininess: 0,
 });
 const noBouncePegMaterial = new THREE.MeshPhongMaterial({
-	color: 0x2277ff,
-	specular: 0x0000ff,
+	color: colors.blue,
+	specular: 0xffffff,
 	shininess: 100,
 });
 
