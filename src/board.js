@@ -5,13 +5,14 @@ import { LAYERS } from "./util";
 import colors from "./colors";
 
 export const board = new THREE.Group();
+export const boardDepth = 0.4;
 
 export const pegShape = Physics.Circle(0.25);
-const pegGeometry = new THREE.CylinderBufferGeometry(0.25, 0.25, 0.8, 16);
+const pegGeometry = new THREE.CylinderBufferGeometry(0.25, 0.25, boardDepth, 16);
 pegGeometry.rotateX(Math.PI / 2);
 
-const circleGeometry = new THREE.RingBufferGeometry(0.125, 0.24, 16, 1);
-circleGeometry.translate(0, 0, 0.401);
+const circleGeometry = new THREE.RingBufferGeometry(0.125, 0.25, 16, 1);
+circleGeometry.translate(0, 0, boardDepth / 2 + 0.005);
 
 const pegMaterial = new THREE.MeshPhongMaterial({
 	color: '#aaaaaa',
@@ -29,14 +30,15 @@ const noBouncePegMaterial = new THREE.MeshPhongMaterial({
 	shininess: 100,
 });
 
-const wallMaterial = new THREE.MeshPhysicalMaterial({
+const wallMaterial = new THREE.MeshStandardMaterial({
 	transparent: true,
-	opacity: 0.5,
+	opacity: 0.7,
 	reflectivity: 1,
-	metalness: 1,
-	roughness: 0.6,
+	metalness: 0.9,
+	roughness: 0.4,
 })
-const wallGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
+const wallGeometry = new THREE.BoxBufferGeometry(1, 1, boardDepth);
+
 export function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, specialBounce = true) {
 	const WallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
 	WallMesh.scale.set(width, height, 1);
@@ -58,17 +60,16 @@ createWall(+7.5, 0, 0.25, 17); //right wall
 
 const glass = new THREE.Mesh(
 	new THREE.PlaneBufferGeometry(14.25, 17),
-	new THREE.MeshPhysicalMaterial({
+	new THREE.MeshStandardMaterial({
 		transparent: true,
-		opacity: 0.4,
+		opacity: 0.8,
 		reflectivity: 1,
 		metalness: 1,
 		roughness: 0.4,
-		side: THREE.DoubleSide,
 	})
 );
 glass.position.x += 0.25;
-glass.position.z += 0.49;
+glass.position.z += boardDepth/2;
 //board.add(glass);
 
 const backGlass = glass.clone();

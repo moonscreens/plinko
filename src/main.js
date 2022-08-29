@@ -134,11 +134,6 @@ function restoreMaterial( obj ) {
 scene.fog = new THREE.Fog(0x000000, camera.position.z, camera.position.z + 15);
 scene.background = new THREE.Color(0x000000);
 
-new RGBELoader().load('/fireplace_2k.hdr', function (texture) {
-	texture.mapping = THREE.EquirectangularReflectionMapping;
-	scene.environment = texture;
-})
-
 function resize() {
 	const width = window.innerWidth;
 	const height = window.innerHeight;
@@ -163,7 +158,7 @@ const sun = new THREE.DirectionalLight(0xffffff, 1);
 sun.position.set(1, 1, 0.5);
 scene.add(sun);
 
-scene.add(new THREE.AmbientLight(0x657576, 0.8));
+scene.add(new THREE.AmbientLight(0xffffff, 0.3));
 
 import { board, pegShape } from './board.js';
 scene.add(board);
