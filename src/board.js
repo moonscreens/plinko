@@ -12,7 +12,7 @@ export const pegShape = Physics.Circle(0.25);
 const pegGeometry = new THREE.CylinderBufferGeometry(0.25, 0.25, boardDepth, 16);
 pegGeometry.rotateX(Math.PI / 2);
 
-const circleGeometry = new THREE.RingBufferGeometry(0.125, 0.25, 16, 1);
+const circleGeometry = new THREE.RingBufferGeometry(0.15, 0.25, 16, 1);
 circleGeometry.translate(0, 0, boardDepth / 2 + 0.005);
 
 const pegMaterial = new THREE.MeshPhongMaterial({
