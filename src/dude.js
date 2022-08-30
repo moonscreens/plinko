@@ -61,7 +61,7 @@ const spots = {
 		run: (spot) => {
 			animateVector(camera.position, [
 				camera.position.clone(),
-				new Vector3(0, 3, camera.position.z)
+				new Vector3(0, 6, camera.position.z)
 			], 4000);
 			animateVector(
 				group.position,
