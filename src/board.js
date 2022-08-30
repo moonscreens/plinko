@@ -3,6 +3,7 @@ import * as Physics from "planck";
 import { world } from "./physWorld";
 import { LAYERS } from "./util";
 import colors from "./colors";
+import { RedSpinningMat } from "./materials";
 
 export const board = new THREE.Group();
 export const boardDepth = 0.4;
@@ -94,7 +95,7 @@ export function createPeg(x, y, options = {}) {
 	const PegMesh = new THREE.Mesh(pegGeometry, mat);
 	PegMesh.position.set(x, y, 0);
 	if (options.superbounce) {
-		const CircleMesh = new THREE.Mesh(circleGeometry, superBouncePegMaterial);
+		const CircleMesh = new THREE.Mesh(circleGeometry, RedSpinningMat);
 		CircleMesh.layers.toggle(LAYERS.bloom);
 		PegMesh.add(CircleMesh);
 	}
