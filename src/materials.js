@@ -59,7 +59,7 @@ export const RedSpinningMat = new THREE.MeshPhongMaterial({
 applyShader(RedSpinningMat, {
 	tick: true,
 	fragment: `
-		diffuseColor.rgb *= sin(u_time * 0.01 + atan(vUv.x, vUv.y) * 4.0);
+		diffuseColor.rgb *= ceil(sin(u_time * 0.01 + atan(vUv.x - 0.5, vUv.y - 0.5) * 3.0) - 0.5);
 	`,
 	fragmentInsert: '#include <color_fragment>'
 })
