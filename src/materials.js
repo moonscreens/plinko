@@ -61,7 +61,7 @@ applyShader(RedSpinningMat, {
 	fragment: `
 		float flip = sin(u_time * 0.01);
 		float brightness = atan(vUv.x - 0.5, vUv.y - 0.5) * 3.0;
-		brightness = min(1.0, max(0.25, flip * sin(brightness) + 0.5));
+		brightness = pow(min(1.0, max(0.25, flip * sin(brightness) + 0.75)), 2.0);
 		diffuseColor.rgb *= brightness;
 		totalEmissiveRadiance.rgb *= brightness;
 	`,
