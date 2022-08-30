@@ -32,8 +32,8 @@ const spots = {
 
 			animateVector(camera.position, [
 				camera.position.clone(),
-				new Vector3(-12, 0, camera.position.z)
-			], 9000);
+				new Vector3(0, 0, camera.position.z)
+			], 5000);
 		},
 	},
 	catching: {
@@ -43,6 +43,10 @@ const spots = {
 		offHand: new Vector3(-3, -2, -1.5),
 		run: (spot) => {
 			handBody.setActive(true);
+			animateVector(camera.position, [
+				camera.position.clone(),
+				new Vector3(-12, 0, camera.position.z)
+			], 4000);
 			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
 			animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, -Math.PI)], 1000);
 			animateVector(offHand.targetPos, [offHand.targetPos, spot.offHand], 3000);
@@ -67,10 +71,6 @@ const spots = {
 					group.position.clone().add(new Vector3(-10, 15, 0)),
 					spot.all
 				], 5000).then(() => {
-					animateVector(camera.position, [
-						camera.position.clone(),
-						new Vector3(0, 0, camera.position.z)
-					], 4000);
 					animateWithDip(offHand.targetPos, spot.offHand);
 					animateWithDip(mainHand.targetPos, spot.mainHand);
 					setTimeout(() => {
