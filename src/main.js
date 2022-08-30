@@ -3,8 +3,6 @@ import * as THREE from "three";
 import Stats from "stats-js";
 import "./main.css";
 
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
-
 import * as Physics from "planck";
 
 import { world } from "./physWorld";
@@ -54,16 +52,7 @@ const ChatInstance = new TwitchChat({
 /*
 ** Initiate ThreejS scene
 */
-
-const camera = new THREE.PerspectiveCamera(
-	70,
-	window.innerWidth / window.innerHeight,
-	0.1,
-	1000
-);
-camera.position.z = 13;
-camera.position.x = -6;
-
+import { camera } from "./camera";
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({ antialias: false });

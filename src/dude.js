@@ -2,6 +2,7 @@ import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry, RepeatWrapping, Te
 import { addTwistBetweenVectors, animateVector, nearestNeighborify } from "./util";
 import { world } from "./physWorld";
 import * as Physics from "planck";
+import { camera } from "./camera";
 
 const dipVector = new Vector3(0, 0, -3) //dips hands into the background while moving
 const animateWithDip = (target, destination, duration = 3000) => {
@@ -28,6 +29,11 @@ const spots = {
 			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
 			animateWithDip(offHand.targetPos, spot.offHand);
 			animateWithDip(mainHand.targetPos, spot.mainHand);
+
+			animateVector(camera.position, [
+				camera.position.clone(),
+				new Vector3(-12, 0, camera.position.z)
+			], 9000);
 		},
 	},
 	catching: {
@@ -49,6 +55,10 @@ const spots = {
 		mainHand: new Vector3(2, -1, 0),
 		offHand: new Vector3(-5, -3, -1.5),
 		run: (spot) => {
+			animateVector(camera.position, [
+				camera.position.clone(),
+				new Vector3(0, 3, camera.position.z)
+			], 4000);
 			animateVector(
 				group.position,
 				[
@@ -57,6 +67,10 @@ const spots = {
 					group.position.clone().add(new Vector3(-10, 15, 0)),
 					spot.all
 				], 5000).then(() => {
+					animateVector(camera.position, [
+						camera.position.clone(),
+						new Vector3(0, 0, camera.position.z)
+					], 4000);
 					animateWithDip(offHand.targetPos, spot.offHand);
 					animateWithDip(mainHand.targetPos, spot.mainHand);
 					setTimeout(() => {
