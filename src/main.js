@@ -53,8 +53,7 @@ const ChatInstance = new TwitchChat({
 ** Initiate ThreejS scene
 */
 import { camera } from "./camera";
-
-const scene = new THREE.Scene();
+import { scene } from "./scene";
 const renderer = new THREE.WebGLRenderer({ antialias: false });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -103,20 +102,20 @@ const finalComposer = new EffectComposer(renderer);
 finalComposer.addPass(renderScene);
 finalComposer.addPass(finalPass);
 
-const darkMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
+const darkMaterial = new THREE.MeshBasicMaterial({ color: 'black' });
 
 const materials = {};
-function darkenNonBloomed( obj ) {
-	if ( obj.isMesh && bloomLayer.test( obj.layers ) === false ) {
-		materials[ obj.uuid ] = obj.material;
+function darkenNonBloomed(obj) {
+	if (obj.isMesh && bloomLayer.test(obj.layers) === false) {
+		materials[obj.uuid] = obj.material;
 		obj.material = darkMaterial;
 	}
 }
 
-function restoreMaterial( obj ) {
-	if ( materials[ obj.uuid ] ) {
-		obj.material = materials[ obj.uuid ];
-		delete materials[ obj.uuid ];
+function restoreMaterial(obj) {
+	if (materials[obj.uuid]) {
+		obj.material = materials[obj.uuid];
+		delete materials[obj.uuid];
 	}
 }
 
@@ -137,7 +136,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	window.addEventListener('resize', resize);
 	if (stats) document.body.appendChild(stats.dom);
 	document.body.appendChild(renderer.domElement);
-	window.requestAnimationFrame(()=>{
+	window.requestAnimationFrame(() => {
 		resize();
 		draw();
 	})
@@ -186,9 +185,9 @@ function draw() {
 	//camera.position.y = dude.position.y * 0.25;
 
 	// render scene with bloom
-	scene.traverse( darkenNonBloomed );
+	scene.traverse(darkenNonBloomed);
 	bloomComposer.render();
-	scene.traverse( restoreMaterial );
+	scene.traverse(restoreMaterial);
 
 	// render the entire scene, then render bloom scene on top
 	finalComposer.render();
@@ -274,17 +273,20 @@ ChatInstance.listen((emotes) => {
 
 	sprite.update = () => {
 		const { p, q } = collider.getTransform();
-		sprite.position.set(p.x, p.y, 0);
 
-		const velocity = collider.getLinearVelocity();
-		dummyVector.set(velocity.x, velocity.y).normalize();
-		//sprite.rotation.z = Math.atan2(dummyVector.x, dummyVector.y);
+		if (!collider.isGrasped) {
+			sprite.position.set(p.x, p.y, 0);
 
-		dummy.position.copy(sprite.position);
-		dummy.position.z = -0.01;
-		dummy.rotation.z = -Math.atan2(dummyVector.x, dummyVector.y) - (Math.PI / 2);
-		dummy.updateMatrixWorld();
-		instancedSphere.setMatrixAt(collider.myId, dummy.matrixWorld);
+			const velocity = collider.getLinearVelocity();
+			dummyVector.set(velocity.x, velocity.y).normalize();
+			//sprite.rotation.z = Math.atan2(dummyVector.x, dummyVector.y);
+
+			dummy.position.copy(sprite.position);
+			dummy.position.z = -0.01;
+			dummy.rotation.z = -Math.atan2(dummyVector.x, dummyVector.y) - (Math.PI / 2);
+			dummy.updateMatrixWorld();
+			instancedSphere.setMatrixAt(collider.myId, dummy.matrixWorld);
+		}
 
 		if (p.y < -15) {
 			sprite.destroy = true;

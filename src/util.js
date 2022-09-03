@@ -109,3 +109,11 @@ export const LAYERS = {
 	default: 0,
 	bloom: 1,
 }
+
+export const checkOverlap = (target, a, b) => {
+	const min_x = Math.min(a.x, b.x);
+	const min_y = Math.min(a.y, b.y);
+	const max_x = Math.max(a.x, b.x);
+	const max_y = Math.max(a.y, b.y);
+	return (target.x > min_x && target.x < max_x && target.y > min_y && target.y < max_y);
+}

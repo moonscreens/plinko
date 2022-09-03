@@ -1,8 +1,11 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry, RepeatWrapping, TextureLoader, Vector3 } from "three";
-import { addTwistBetweenVectors, animateVector, nearestNeighborify } from "./util";
+import { addTwistBetweenVectors, animateVector, checkOverlap, nearestNeighborify } from "./util";
 import { world } from "./physWorld";
 import * as Physics from "planck";
 import { camera } from "./camera";
+import { scene } from "./scene";
+import { AABB, Vec2 } from "planck";
+import { Vector2 } from "three";
 
 const dipVector = new Vector3(0, 0, -3) //dips hands into the background while moving
 const animateWithDip = (target, destination, duration = 3000) => {
@@ -59,6 +62,8 @@ const spots = {
 		mainHand: new Vector3(2, -1, 0),
 		offHand: new Vector3(-5, -3, -1.5),
 		run: (spot) => {
+			handBody.setActive(false);
+			handGrasp();
 			animateVector(camera.position, [
 				camera.position.clone(),
 				new Vector3(0, 6, camera.position.z)
@@ -74,8 +79,10 @@ const spots = {
 					animateWithDip(offHand.targetPos, spot.offHand);
 					animateWithDip(mainHand.targetPos, spot.mainHand);
 					setTimeout(() => {
-						animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, 0)], 1000);
-						handBody.setActive(false);
+						animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, 0)], 1000)
+						.then(()=>{
+							handRelease();
+						})
 					}, 4000)
 				})
 		},
@@ -152,6 +159,50 @@ animateVector(group.position, [new Vector3(0, 0, -3), new Vector3(0, -1, -3), ne
 animateVector(head.targetPos, [head.targetPos.clone(), spots.idle.head], 1000);
 animateVector(mainHand.targetPos, [mainHand.targetPos.clone(), spots.idle.mainHand], 1000);
 animateVector(offHand.targetPos, [offHand.targetPos.clone(), spots.idle.offHand], 1000);
+
+const graspedEmotes = [];
+function handGrasp() {
+	const handPos = new Vector3();
+	mainHand.getWorldPosition(handPos)
+	const handOverlapStart = new Vector2(
+		handPos.x - 3,
+		handPos.y + 2
+	);
+	const handOverlapEnd = new Vector2(
+		handPos.x + 3,
+		handPos.y
+	);
+	for (let body = world.getBodyList(); body; body = body.getNext()) {
+		if (body.objectType === 'emote') {
+			const { p, q } = body.getTransform();
+			if (checkOverlap(new Vector2(p.x, p.y), handOverlapStart, handOverlapEnd)) {
+				body.setActive(false);
+				body.isGrasped = true;
+				mainHand.attach(body.mesh);
+				graspedEmotes.push(body);
+			}
+		}
+	}
+	console.log(graspedEmotes.length, 'grasped');
+}
+function handRelease() {
+	const worldPos = new Vector3();
+	for (let i = graspedEmotes.length - 1; i >= 0; i--) {
+		const body = graspedEmotes[i];
+
+		if (body.objectType === 'emote') {
+			body.setActive(true);
+			body.isGrasped = false;
+
+			body.mesh.getWorldPosition(worldPos);
+			scene.attach(body.mesh);
+			body.mesh.position.copy(worldPos);
+			body.setPosition(new Physics.Vec2(worldPos.x, worldPos.y));
+
+			graspedEmotes.splice(i, 1);
+		}
+	};
+}
 
 group.tick = function tick(delta) {
 	head.position.set(head.targetPos.x,
