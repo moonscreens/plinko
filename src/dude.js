@@ -68,21 +68,20 @@ const spots = {
 				camera.position.clone(),
 				new Vector3(0, 6, camera.position.z)
 			], 4000);
+			animateWithDip(offHand.targetPos, spot.offHand, 5000);
+			animateWithDip(mainHand.targetPos, spot.mainHand, 5000);
 			animateVector(
 				group.position,
 				[
 					group.position.clone(),
-					group.position.clone().add(new Vector3(-10, 3, 0)),
 					group.position.clone().add(new Vector3(-10, 15, 0)),
 					spot.all
 				], 5000).then(() => {
-					animateWithDip(offHand.targetPos, spot.offHand);
-					animateWithDip(mainHand.targetPos, spot.mainHand);
 					setTimeout(() => {
 						animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, 0)], 1000)
-						.then(()=>{
-							handRelease();
-						})
+							.then(() => {
+								handRelease();
+							})
 					}, 4000)
 				})
 		},
@@ -205,12 +204,13 @@ function handRelease() {
 }
 
 group.tick = function tick(delta) {
-	head.position.set(head.targetPos.x,
+	head.position.set(
+		head.targetPos.x,
 		head.targetPos.y + Math.sin(performance.now() / 1500) * 0.4,
 		head.targetPos.z
 	);
-
-	mainHand.position.set(mainHand.targetPos.x,
+	mainHand.position.set(
+		mainHand.targetPos.x,
 		mainHand.targetPos.y + Math.sin(performance.now() / 1000 + 100) * 0.25,
 		mainHand.targetPos.z
 	);
