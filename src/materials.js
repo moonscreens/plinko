@@ -67,3 +67,23 @@ applyShader(RedSpinningMat, {
 	`,
 	fragmentInsert: '#include <emissivemap_fragment>'
 })
+
+
+export const GreenSpinningMat = new THREE.MeshPhongMaterial({
+	color: colors.green,
+	emissive: colors.green,
+	shininess: 0,
+});
+
+applyShader(GreenSpinningMat, {
+	tick: true,
+	fragment: `
+		float brightness = 0.0;
+		float angle = atan(vUv.x - 0.5, vUv.y - 0.5);
+		brightness += angle * 3.0 + u_time*0.005;
+		brightness = sin(brightness) + 1.0;
+		diffuseColor.rgb *= brightness;
+		totalEmissiveRadiance.rgb *= brightness;
+	`,
+	fragmentInsert: '#include <emissivemap_fragment>'
+})

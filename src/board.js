@@ -3,7 +3,7 @@ import * as Physics from "planck";
 import { world } from "./physWorld";
 import { LAYERS } from "./util";
 import colors from "./colors";
-import { RedSpinningMat } from "./materials";
+import { BlueSpinningMat, GreenSpinningMat, RedSpinningMat } from "./materials";
 
 export const board = new THREE.Group();
 export const boardDepth = 0.4;
@@ -98,6 +98,11 @@ export function createPeg(x, y, options = {}) {
 		CircleMesh.layers.toggle(LAYERS.bloom);
 		PegMesh.add(CircleMesh);
 	}
+	if (options.resetPegs) {
+		const CircleMesh = new THREE.Mesh(circleGeometry, GreenSpinningMat);
+		CircleMesh.layers.toggle(LAYERS.bloom);
+		PegMesh.add(CircleMesh);
+	}
 
 	const collider = world.createBody({
 		position: Physics.Vec2(x, y)
@@ -143,7 +148,7 @@ for (let x = -boardLength / 2; x <= boardLength / 2; x++) {
 for (let x = -Math.round(boardLength * 1.5); x < Math.round(boardLength * 1.5); x++) {
 	createPeg(x * 0.5 + 0.5, Math.sin((x / boardLength) * Math.PI * 1.5), {
 		superbounce: Math.abs(x) === 4 || Math.abs(x) === 12,
-		nobounce: Math.abs(x) === 8 || Math.abs(x) === 16 || x === 0,
+		//nobounce: Math.abs(x) === 8 || Math.abs(x) === 16 || x === 0,
 		resetPegs: Math.abs(x) === 8 || Math.abs(x) === 16 || x === 0,
 	})
 }
