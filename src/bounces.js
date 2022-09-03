@@ -35,11 +35,19 @@ world.on('begin-contact', function (contact) {
 			emote.applyLinearImpulse(direction.mul(multiplier), emoteCenter);
 		}, 0)
 		hitPeg(peg);
+
+		if (emote.hasOwnProperty('onHit')) {
+			emote.onHit(emote, peg);
+		}
 	}
 	if (emote && wall) {
 		const velocity = emote.getLinearVelocity();
 		velocity.x *= -1;
 		emote.setLinearVelocity(velocity);
+
+		if (wall.hasOwnProperty('onHit')) {
+			wall.onHit(emote);
+		}
 	}
 });
 

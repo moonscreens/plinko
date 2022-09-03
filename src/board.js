@@ -13,7 +13,7 @@ const pegGeometry = new THREE.CylinderBufferGeometry(0.25, 0.25, boardDepth, 16)
 pegGeometry.rotateX(Math.PI / 2);
 
 const circleGeometry = new THREE.RingBufferGeometry(0.15, 0.25, 16, 1);
-circleGeometry.translate(0, 0, boardDepth / 2 + 0.005);
+circleGeometry.translate(0, 0, boardDepth / 2 + 0.04);
 
 const pegMaterial = new THREE.MeshPhongMaterial({
 	color: '#aaaaaa',
@@ -51,9 +51,13 @@ export function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, sp
 
 	board.add(WallMesh);
 }
-createWall(0.25, 25/2, 14, 0.5); //top wall
-createWall(-7, 0, 0.25, 25); //left wall
-createWall(+7.5, 0, 0.25, 25); //right wall
+
+const wallWidth = 0.25;
+const boardHeight = 30;
+const boardWidth = 14;
+createWall(0, boardHeight / 2, boardWidth - wallWidth, wallWidth); //top wall
+createWall(-boardWidth / 2, 0, wallWidth, boardHeight); //left wall
+createWall(boardWidth / 2, 0, wallWidth, boardHeight); //right wall
 
 const glass = new THREE.Mesh(
 	new THREE.PlaneBufferGeometry(14.25, 17),
@@ -66,7 +70,7 @@ const glass = new THREE.Mesh(
 	})
 );
 glass.position.x += 0.25;
-glass.position.z += boardDepth/2;
+glass.position.z += boardDepth / 2;
 //board.add(glass);
 
 const backGlass = glass.clone();
@@ -142,7 +146,7 @@ setInterval(() => {
 const boardLength = 8;
 for (let x = -boardLength / 2; x <= boardLength / 2; x++) {
 	for (let y = -5; y <= 5; y++) {
-		if (y > 1 || y < -1) createPeg((x + (y % 2 === 0 ? 0.5 : 0)) * 1.5, y * 1.5)
+		if (y > 1 || y < -1) createPeg((x - 0.25 + (y % 2 === 0 ? 0.5 : 0)) * 1.5, y * 1.5)
 	}
 }
 
@@ -152,4 +156,44 @@ for (let x = -Math.round(boardLength * 1.5); x < Math.round(boardLength * 1.5); 
 		superbounce: Math.abs(x) === 4 || Math.abs(x) === 12,
 		nobounce: Math.abs(x) === 8 || Math.abs(x) === 16,
 	})
+}
+
+
+const activeBoardEmotes = [];
+
+const emoteDeath = (body) => {
+	console.log(body.myScore);
+
+	delete body.myScore;
+	delete body.onDeath;
+	delete body.onHit;
+	for (let index = 0; index < activeBoardEmotes.length; index++) {
+		const element = activeBoardEmotes[index];
+		if (body.id === element.id) {
+			activeBoardEmotes.splice(index, 1);
+			break;
+		}
+	}
+}
+const emoteHit = (body, surface) => {
+	body.myScore++;
+}
+
+export const boardHasEmotes = () => {
+	return activeBoardEmotes.length > 0;
+}
+
+export const addBoardEmotes = (list) => {
+	if (typeof list !== 'array' && !list.length) {
+		list = [list];
+	}
+
+	for (let index = 0; index < list.length; index++) {
+		const element = list[index];
+		element.onDeath = emoteDeath;
+		element.onHit = emoteHit;
+		element.myScore = 0;
+		activeBoardEmotes.push(element);
+	}
+
 }

@@ -6,6 +6,7 @@ import { camera } from "./camera";
 import { scene } from "./scene";
 import { AABB, Vec2 } from "planck";
 import { Vector2 } from "three";
+import { addBoardEmotes, boardHasEmotes } from "./board";
 
 const dipVector = new Vector3(0, 0, -3) //dips hands into the background while moving
 const animateWithDip = (target, destination, duration = 3000) => {
@@ -35,7 +36,7 @@ const spots = {
 
 			animateVector(camera.position, [
 				camera.position.clone(),
-				new Vector3(0, 0, camera.position.z)
+				new Vector3(0, 0, 15)
 			], 5000);
 		},
 	},
@@ -46,10 +47,12 @@ const spots = {
 		offHand: new Vector3(-3, -2, -1.5),
 		run: (spot) => {
 			handBody.setActive(true);
-			animateVector(camera.position, [
-				camera.position.clone(),
-				new Vector3(-12, 0, camera.position.z)
-			], 4000);
+			if (!boardHasEmotes()) {
+				animateVector(camera.position, [
+					camera.position.clone(),
+					new Vector3(-12, 0, 13)
+				], 4000);
+			}
 			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
 			animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, -Math.PI)], 1000);
 			animateVector(offHand.targetPos, [offHand.targetPos, spot.offHand], 3000);
@@ -66,7 +69,7 @@ const spots = {
 			handGrasp();
 			animateVector(camera.position, [
 				camera.position.clone(),
-				new Vector3(0, 6, camera.position.z)
+				new Vector3(0, 3, 17)
 			], 4000);
 			animateWithDip(offHand.targetPos, spot.offHand, 5000);
 			animateWithDip(mainHand.targetPos, spot.mainHand, 5000);
@@ -111,7 +114,7 @@ export const head = new Mesh(
 		transparent: true,
 	})
 );
-group.add(head);
+//group.add(head);
 
 const handGeometry = new PlaneBufferGeometry(4, 4);
 export const mainHand = new Mesh(
@@ -184,7 +187,9 @@ function handGrasp() {
 	}
 	console.log(graspedEmotes.length, 'grasped');
 }
+
 function handRelease() {
+	addBoardEmotes(graspedEmotes);
 	const worldPos = new Vector3();
 	for (let i = graspedEmotes.length - 1; i >= 0; i--) {
 		const body = graspedEmotes[i];

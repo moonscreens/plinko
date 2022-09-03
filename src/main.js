@@ -200,7 +200,7 @@ function draw() {
 ** Handle Twitch Chat Emotes
 */
 const sceneEmoteArray = [];
-const emoteGeometry = new THREE.PlaneBufferGeometry(0.5, 0.5, 1, 1);
+const emoteGeometry = new THREE.PlaneBufferGeometry(0.75, 0.75, 1, 1);
 
 const sphereGeometry = new THREE.CircleBufferGeometry(0.25, 1, -Math.PI / 8, Math.PI / 4);
 sphereGeometry.translate(-0.5, 0, 0);
@@ -284,12 +284,16 @@ ChatInstance.listen((emotes) => {
 			dummy.position.copy(sprite.position);
 			dummy.position.z = -0.01;
 			dummy.rotation.z = -Math.atan2(dummyVector.x, dummyVector.y) - (Math.PI / 2);
+			sprite.rotation.z = dummy.rotation.z;
 			dummy.updateMatrixWorld();
 			instancedSphere.setMatrixAt(collider.myId, dummy.matrixWorld);
 		}
 
 		if (p.y < -15) {
 			sprite.destroy = true;
+			if (collider.onDeath) {
+				collider.onDeath(collider);
+			}
 			collider.setActive(false);
 			removeBody(collider.myId);
 		}
