@@ -6,7 +6,7 @@ import { camera } from "./camera";
 import { scene } from "./scene";
 import { AABB, Vec2 } from "planck";
 import { Vector2 } from "three";
-import { addBoardEmotes, boardHasEmotes } from "./board";
+import { addBoardEmotes, boardHasEmotes, resetPegs } from "./board";
 
 const dipVector = new Vector3(0, 0, -3) //dips hands into the background while moving
 const animateWithDip = (target, destination, duration = 3000) => {
@@ -84,6 +84,7 @@ const spots = {
 						animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, 0)], 1000)
 							.then(() => {
 								handRelease();
+								resetPegs();
 							})
 					}, 4000)
 				})
@@ -114,7 +115,7 @@ export const head = new Mesh(
 		transparent: true,
 	})
 );
-//group.add(head);
+group.add(head);
 
 const handGeometry = new PlaneBufferGeometry(4, 4);
 export const mainHand = new Mesh(
