@@ -177,7 +177,7 @@ function draw() {
 		}
 	}
 
-	instancedSphere.instanceMatrix.needsUpdate = true;
+	//instancedSphere.instanceMatrix.needsUpdate = true;
 
 	dude.tick(delta);
 
@@ -209,10 +209,10 @@ const sphereMaterial = new THREE.MeshBasicMaterial({
 	color: 0x444444,
 	opacity: 0.1,
 });
-const instancedSphere = new THREE.InstancedMesh(sphereGeometry, sphereMaterial, 1024);
-instancedSphere.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+//const instancedSphere = new THREE.InstancedMesh(sphereGeometry, sphereMaterial, 1024);
+//instancedSphere.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
 
-scene.add(instancedSphere);
+//scene.add(instancedSphere);
 const dummy = new THREE.Object3D();
 
 const activeBodies = [];
@@ -286,7 +286,7 @@ ChatInstance.listen((emotes) => {
 			dummy.rotation.z = -Math.atan2(dummyVector.x, dummyVector.y) - (Math.PI / 2);
 			sprite.rotation.z = dummy.rotation.z;
 			dummy.updateMatrixWorld();
-			instancedSphere.setMatrixAt(collider.myId, dummy.matrixWorld);
+			//instancedSphere.setMatrixAt(collider.myId, dummy.matrixWorld);
 		}
 
 		if (p.y < -15) {
