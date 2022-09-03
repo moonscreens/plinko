@@ -27,7 +27,7 @@ const createInput = (name, type, changeListener) => {
 		input.addEventListener('change', changeListener);
 	}
 
-	return wrapper;
+	return {wrapper, input};
 }
 
 const containers = {};
@@ -45,7 +45,7 @@ const getContainer = (name) => {
 }
 
 const setupTextureInput = (name, material) => {
-	const input = createInput('texture:', 'file', (e) => {
+	const {wrapper, input} = createInput('texture:', 'file', (e) => {
 		const image = new Image();
 		image.onload = () => {
 			const canvas = document.createElement('canvas');
@@ -60,14 +60,29 @@ const setupTextureInput = (name, material) => {
 		image.src = URL.createObjectURL(e.target.files[0]);
 		console.log(image.src);
 	});
-	getContainer(name).appendChild(input);
+	getContainer(name).appendChild(wrapper);
+}
+
+
+const setupScaleInput = (name, vector, defaultValue = 1) => {
+	const {wrapper, input} = createInput('scale:', 'range', (e) => {
+		const scale = (e.target.value / 300) * defaultValue * 2;
+		vector.setScalar(scale);
+	});
+	input.min = 0;
+	input.max = 300;
+	input.value = (vector.x / Number(input.max)) * defaultValue * 2;
+	getContainer(name).appendChild(wrapper);
 }
 
 export const initDev = () => {
 
 	setupTextureInput("Head", head.material);
+	setupScaleInput("Head", head.scale, 2);
 	setupTextureInput("Main Hand", mainHand.material);
+	setupScaleInput("Main Hand", mainHand.scale, 2);
 	setupTextureInput("Off Hand", offHand.material);
+	setupScaleInput("Off Hand", offHand.scale, 2);
 
 
 	document.addEventListener('DOMContentLoaded', () => {
