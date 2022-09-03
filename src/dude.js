@@ -168,11 +168,11 @@ function handGrasp() {
 	const handPos = new Vector3();
 	mainHand.getWorldPosition(handPos)
 	const handOverlapStart = new Vector2(
-		handPos.x - 3,
+		handPos.x - 2,
 		handPos.y + 2
 	);
 	const handOverlapEnd = new Vector2(
-		handPos.x + 3,
+		handPos.x + 2,
 		handPos.y
 	);
 	for (let body = world.getBodyList(); body; body = body.getNext()) {
