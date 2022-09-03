@@ -51,8 +51,9 @@ export function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, sp
 
 	board.add(WallMesh);
 }
-createWall(-7, 0, 0.25, 17); //left wall
-createWall(+7.5, 0, 0.25, 17); //right wall
+createWall(0.25, 25/2, 14, 0.5); //top wall
+createWall(-7, 0, 0.25, 25); //left wall
+createWall(+7.5, 0, 0.25, 25); //right wall
 
 const glass = new THREE.Mesh(
 	new THREE.PlaneBufferGeometry(14.25, 17),
