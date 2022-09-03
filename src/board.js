@@ -20,11 +20,6 @@ const pegMaterial = new THREE.MeshPhongMaterial({
 	shininess: 100,
 });
 
-const superBouncePegMaterial = new THREE.MeshPhongMaterial({
-	color: colors.red,
-	emissive: colors.red,
-	shininess: 0,
-});
 const noBouncePegMaterial = new THREE.MeshPhongMaterial({
 	color: colors.blue,
 	specular: 0xffffff,
