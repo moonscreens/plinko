@@ -84,8 +84,7 @@ createWall(-15 - 0.526, 0 + 4, 2, 0.5, +Math.PI / 4, false);
 createWall(-15 + 3.5, -5 + 4, 5, 0.5, +0.5, false);
 createWall(-15 - 3.5, -5 + 4, 5, 0.5, -0.5, false);
 
-const togglePegs = [];
-let toggledNumber = 0;
+const pegBodies = [];
 export function createPeg(x, y, options = {}) {
 	let mat = pegMaterial;
 
@@ -111,37 +110,28 @@ export function createPeg(x, y, options = {}) {
 
 	collider.customConfig = options;
 
-	if (options.toggles) {
-		togglePegs.push(collider);
-	}
 	board.add(PegMesh);
+	pegBodies.push(collider);
 }
-export function hitPeg(collider) {
-	collider.setActive(false);
-	collider.mesh.scale.setScalar(0.25);
-
-	if (collider.customConfig.toggles) {
-		toggledNumber++;
-		return;
+export function hitPeg(body) {
+	if (!body.customConfig.nobounce) {
+		body.setActive(false);
+		body.mesh.scale.setScalar(0.25);
 	}
-	setTimeout(() => {
-		collider.setActive(true);
-		collider.mesh.scale.setScalar(1);
-	}, 1500);
+
+	if (body.customConfig.resetPegs) {
+		resetPegs();
+	}
 }
 
-let lastToggle = performance.now();
-setInterval(() => {
-	if (lastToggle < performance.now() - 30000 || toggledNumber / togglePegs.length > 0.6) {
-		lastToggle = performance.now();
-		toggledNumber = 0;
-		for (let index = 0; index < togglePegs.length; index++) {
-			const element = togglePegs[index];
-			element.setActive(true);
-			element.mesh.scale.setScalar(1);
-		}
+export function resetPegs() {
+	for (let index = 0; index < pegBodies.length; index++) {
+		const body = pegBodies[index];
+
+		body.setActive(true);
+		body.mesh.scale.setScalar(1);
 	}
-}, 1000);
+}
 
 const boardLength = 8;
 for (let x = -boardLength / 2; x <= boardLength / 2; x++) {
@@ -152,9 +142,9 @@ for (let x = -boardLength / 2; x <= boardLength / 2; x++) {
 
 for (let x = -Math.round(boardLength * 1.5); x < Math.round(boardLength * 1.5); x++) {
 	createPeg(x * 0.5 + 0.5, Math.sin((x / boardLength) * Math.PI * 1.5), {
-		toggles: true,
 		superbounce: Math.abs(x) === 4 || Math.abs(x) === 12,
-		nobounce: Math.abs(x) === 8 || Math.abs(x) === 16,
+		nobounce: Math.abs(x) === 8 || Math.abs(x) === 16 || x === 0,
+		resetPegs: Math.abs(x) === 8 || Math.abs(x) === 16 || x === 0,
 	})
 }
 
@@ -195,5 +185,4 @@ export const addBoardEmotes = (list) => {
 		element.myScore = 0;
 		activeBoardEmotes.push(element);
 	}
-
 }

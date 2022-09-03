@@ -1,5 +1,5 @@
 import { world } from './physWorld';
-import { hitPeg } from "./board";
+import { hitPeg, resetPegs } from "./board";
 
 world.on('begin-contact', function (contact) {
 	/* handle begin event */
@@ -9,7 +9,6 @@ world.on('begin-contact', function (contact) {
 	let peg = null;
 	if (bodyA.objectType === 'peg') peg = bodyA;
 	if (bodyB.objectType === 'peg') peg = bodyB;
-	if (peg && peg.customConfig && peg.customConfig.nobounce) return;
 
 	let wall = null;
 	if (bodyA.objectType === 'wall') wall = bodyA;
@@ -31,9 +30,11 @@ world.on('begin-contact', function (contact) {
 
 		multiplier += Math.random() * 5;
 
-		setTimeout(() => {
-			emote.applyLinearImpulse(direction.mul(multiplier), emoteCenter);
-		}, 0)
+		if (!peg.customConfig.nobounce) {
+			setTimeout(() => {
+				emote.applyLinearImpulse(direction.mul(multiplier), emoteCenter);
+			}, 0)
+		}
 		hitPeg(peg);
 
 		if (emote.hasOwnProperty('onHit')) {
@@ -46,7 +47,7 @@ world.on('begin-contact', function (contact) {
 		emote.setLinearVelocity(velocity);
 
 		if (wall.hasOwnProperty('onHit')) {
-			wall.onHit(emote);
+			wall.onHit(emote, wall);
 		}
 	}
 });
