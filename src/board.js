@@ -46,7 +46,7 @@ export function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, sp
 }
 
 const wallWidth = 0.25;
-createWall(0, boardHeight / 2 - wallWidth / 2, boardWidth - wallWidth, wallWidth); //top wall
+createWall(0, boardHeight / 2 - wallWidth / 2, boardWidth - wallWidth, wallWidth, 0, false); //top wall
 createWall(-boardWidth / 2, 0, wallWidth, boardHeight); //left wall
 createWall(boardWidth / 2, 0, wallWidth, boardHeight); //right wall
 

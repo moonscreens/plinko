@@ -250,6 +250,7 @@ ChatInstance.listen((emotes) => {
 
 		if (p.y < -15) {
 			sprite.destroy = true;
+			collider.myScore = 0;
 			if (collider.onDeath) {
 				collider.onDeath(collider);
 			}

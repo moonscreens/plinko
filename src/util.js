@@ -145,7 +145,7 @@ export const generateTextPlane = (width, height, resolution, text) => {
 		texture.needsUpdate = true;
 	}
 	updateText(text);
-	window.addEventListener('load', ()=>{
+	window.addEventListener('load', () => {
 		updateText(text);
 	})
 	return {
@@ -166,7 +166,7 @@ export const activeBoardEmotes = [];
 
 export const pegShape = Physics.Circle(0.25);
 
-export const emoteDeath = (body) => {
+export const onDeath = (body) => {
 	for (let index = 0; index < activeBoardEmotes.length; index++) {
 		const element = activeBoardEmotes[index];
 		if (body.myId === element.myId) {
@@ -211,8 +211,7 @@ export function getBody() {
 		collider.setAngularDamping(0);
 		collider.myId = currentID++;
 
-
-		collider.onDeath = emoteDeath;
+		collider.onDeath = onDeath;
 		collider.onHit = emoteHit;
 		collider.myScore = 0;
 		activeBodies.push(collider);
