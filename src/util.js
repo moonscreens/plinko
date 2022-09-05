@@ -1,4 +1,4 @@
-import { CatmullRomCurve3, NearestFilter, Vector2, Vector3 } from "three";
+import { CanvasTexture, CatmullRomCurve3, Mesh, MeshBasicMaterial, NearestFilter, PlaneGeometry, Vector2, Vector3 } from "three";
 import { lerp } from "three/src/math/MathUtils";
 
 const easeInOutSine = (x) => {
@@ -116,4 +116,32 @@ export const checkOverlap = (target, a, b) => {
 	const max_x = Math.max(a.x, b.x);
 	const max_y = Math.max(a.y, b.y);
 	return (target.x > min_x && target.x < max_x && target.y > min_y && target.y < max_y);
+}
+
+export const shiftGeometryLeft = (geometry) => {
+    const positions = geometry.getAttribute('position');
+    for (let index = positions.itemSize; index < positions.count * positions.itemSize; index++) {
+        positions.array[index - positions.itemSize] = positions.array[index];
+    }
+	geometry.setAttribute('position', positions);
+}
+
+export const generateTextPlane = (width, height, resolution, text) => {
+	const canvas = document.createElement('canvas');
+	canvas.width = Math.round(width * resolution);
+	canvas.height = Math.round(height * resolution);
+	const ctx = canvas.getContext('2d');
+	ctx.font = Math.round(height * resolution)+'px monospace';
+	ctx.fillStyle = '#2288ff';
+	ctx.fillText(text, 0, canvas.height);
+
+	const texture = new CanvasTexture(canvas);
+	texture.magFilter = NearestFilter;
+	return new Mesh(
+		new PlaneGeometry(width, height),
+		new MeshBasicMaterial({
+			map: texture,
+			transparent: true,
+		})
+	);
 }

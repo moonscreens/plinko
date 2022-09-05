@@ -3,16 +3,17 @@ import * as Physics from "planck";
 import { world } from "./physWorld";
 import { LAYERS } from "./util";
 import colors from "./colors";
-import { BlueSpinningMat, GreenSpinningMat, RedSpinningMat } from "./materials";
+import { glassMaterial, GreenSpinningMat, RedSpinningMat } from "./materials";
+import { boardHeight, boardWidth } from "./config";
 
 export const board = new THREE.Group();
 export const boardDepth = 0.4;
 
 export const pegShape = Physics.Circle(0.25);
-const pegGeometry = new THREE.CylinderBufferGeometry(0.25, 0.25, boardDepth, 16);
+const pegGeometry = new THREE.CylinderGeometry(0.25, 0.25, boardDepth, 16);
 pegGeometry.rotateX(Math.PI / 2);
 
-const circleGeometry = new THREE.RingBufferGeometry(0.15, 0.25, 16, 1);
+const circleGeometry = new THREE.RingGeometry(0.15, 0.25, 16, 1);
 circleGeometry.translate(0, 0, boardDepth / 2 + 0.04);
 
 const pegMaterial = new THREE.MeshPhongMaterial({
@@ -26,17 +27,10 @@ const noBouncePegMaterial = new THREE.MeshPhongMaterial({
 	shininess: 100,
 });
 
-const wallMaterial = new THREE.MeshStandardMaterial({
-	transparent: true,
-	opacity: 0.7,
-	reflectivity: 1,
-	metalness: 0.9,
-	roughness: 0.4,
-})
-const wallGeometry = new THREE.BoxBufferGeometry(1, 1, boardDepth);
+const wallGeometry = new THREE.BoxGeometry(1, 1, boardDepth);
 
 export function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, specialBounce = true) {
-	const WallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
+	const WallMesh = new THREE.Mesh(wallGeometry, glassMaterial);
 	WallMesh.scale.set(width, height, 1);
 	WallMesh.position.set(x, y, 0);
 	WallMesh.rotation.z = rotation;
@@ -53,14 +47,12 @@ export function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, sp
 }
 
 const wallWidth = 0.25;
-const boardHeight = 25;
-const boardWidth = 14;
 createWall(0, boardHeight / 2 - wallWidth/2, boardWidth - wallWidth, wallWidth); //top wall
 createWall(-boardWidth / 2, 0, wallWidth, boardHeight); //left wall
 createWall(boardWidth / 2, 0, wallWidth, boardHeight); //right wall
 
 const glass = new THREE.Mesh(
-	new THREE.PlaneBufferGeometry(boardWidth - wallWidth	, 17),
+	new THREE.PlaneGeometry(boardWidth - wallWidth	, 17),
 	new THREE.MeshStandardMaterial({
 		transparent: true,
 		opacity: 0.8,
@@ -152,7 +144,7 @@ for (let x = -Math.round(boardLength * 1.5); x < Math.round(boardLength * 1.5); 
 }
 
 
-const activeBoardEmotes = [];
+export const activeBoardEmotes = [];
 
 const emoteDeath = (body) => {
 	console.log(body.myScore);

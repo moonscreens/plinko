@@ -1,4 +1,4 @@
-import { Group, Mesh, MeshBasicMaterial, PlaneBufferGeometry, RepeatWrapping, TextureLoader, Vector3 } from "three";
+import { Group, Mesh, MeshBasicMaterial, PlaneGeometry, RepeatWrapping, TextureLoader, Vector3 } from "three";
 import { addTwistBetweenVectors, animateVector, checkOverlap, nearestNeighborify } from "./util";
 import { world } from "./physWorld";
 import * as Physics from "planck";
@@ -109,7 +109,7 @@ export default group;
 const loader = new TextureLoader();
 
 export const head = new Mesh(
-	new PlaneBufferGeometry(7, 7),
+	new PlaneGeometry(7, 7),
 	new MeshBasicMaterial({
 		map: loader.load("/face.png"),
 		transparent: true,
@@ -117,7 +117,7 @@ export const head = new Mesh(
 );
 group.add(head);
 
-const handGeometry = new PlaneBufferGeometry(4, 4);
+const handGeometry = new PlaneGeometry(4, 4);
 export const mainHand = new Mesh(
 	handGeometry,
 	new MeshBasicMaterial({

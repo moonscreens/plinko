@@ -47,7 +47,10 @@ const ChatInstance = new TwitchChat({
 
 	channels,
 	maximumEmoteLimit: 1,
-})
+});
+
+import { activateMarketplace } from "./marketplace";
+activateMarketplace(ChatInstance.EmoteService.client);
 
 /*
 ** Initiate ThreejS scene
@@ -200,9 +203,9 @@ function draw() {
 ** Handle Twitch Chat Emotes
 */
 const sceneEmoteArray = [];
-const emoteGeometry = new THREE.PlaneBufferGeometry(0.75, 0.75, 1, 1);
+const emoteGeometry = new THREE.PlaneGeometry(0.75, 0.75, 1, 1);
 
-const sphereGeometry = new THREE.CircleBufferGeometry(0.25, 1, -Math.PI / 8, Math.PI / 4);
+const sphereGeometry = new THREE.CircleGeometry(0.25, 1, -Math.PI / 8, Math.PI / 4);
 sphereGeometry.translate(-0.5, 0, 0);
 sphereGeometry.scale(1.25, 1.25, 1.25);
 const sphereMaterial = new THREE.MeshBasicMaterial({
