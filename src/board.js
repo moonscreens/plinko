@@ -60,7 +60,7 @@ createWall(-boardWidth / 2, 0, wallWidth, boardHeight); //left wall
 createWall(boardWidth / 2, 0, wallWidth, boardHeight); //right wall
 
 const glass = new THREE.Mesh(
-	new THREE.PlaneBufferGeometry(boardWidth - wallWidth*2, 17),
+	new THREE.PlaneBufferGeometry(boardWidth - wallWidth	, 17),
 	new THREE.MeshStandardMaterial({
 		transparent: true,
 		opacity: 0.8,
@@ -69,7 +69,6 @@ const glass = new THREE.Mesh(
 		roughness: 0.4,
 	})
 );
-glass.position.x += 0.25;
 glass.position.z += boardDepth / 2;
 //board.add(glass);
 
