@@ -137,6 +137,6 @@ for (let x = -Math.round(boardLength * 1.5); x < Math.round(boardLength * 1.5); 
 	createPeg(x * 0.5 + 0.5, Math.sin((x / boardLength) * Math.PI * 1.5), {
 		superbounce: Math.abs(x) === 4 || Math.abs(x) === 12,
 		//nobounce: Math.abs(x) === 8 || Math.abs(x) === 16 || x === 0,
-		resetPegs: Math.abs(x) === 8 || Math.abs(x) === 16,
+		resetPegs: Math.abs(x) === 8 || Math.abs(x) === 16 || x === 0,
 	})
 }
