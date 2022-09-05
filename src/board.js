@@ -128,8 +128,11 @@ export function resetPegs() {
 
 const boardLength = 8;
 for (let x = -boardLength / 2; x <= boardLength / 2; x++) {
-	for (let y = -5; y <= 5; y++) {
-		if (y > 1 || y < -1) createPeg((x - 0.25 + (y % 2 === 0 ? 0.5 : 0)) * 1.5, y * 1.5)
+	for (let y = -6; y <= 6; y++) {
+		if (y > 1 || y < -1) createPeg((x - 0.25 + (y % 2 === 0 ? 0.5 : 0)) * 1.5, y * 1.5, {
+			nobounce: y === 6,
+			superbounce: y === -6,
+		})
 	}
 }
 
