@@ -53,14 +53,14 @@ export function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, sp
 }
 
 const wallWidth = 0.25;
-const boardHeight = 30;
+const boardHeight = 25;
 const boardWidth = 14;
-createWall(0, boardHeight / 2, boardWidth - wallWidth, wallWidth); //top wall
+createWall(0, boardHeight / 2 - wallWidth/2, boardWidth - wallWidth, wallWidth); //top wall
 createWall(-boardWidth / 2, 0, wallWidth, boardHeight); //left wall
 createWall(boardWidth / 2, 0, wallWidth, boardHeight); //right wall
 
 const glass = new THREE.Mesh(
-	new THREE.PlaneBufferGeometry(14.25, 17),
+	new THREE.PlaneBufferGeometry(boardWidth - wallWidth*2, 17),
 	new THREE.MeshStandardMaterial({
 		transparent: true,
 		opacity: 0.8,
@@ -119,13 +119,12 @@ export function createPeg(x, y, options = {}) {
 	pegBodies.push(collider);
 }
 export function hitPeg(body) {
+	if (body.customConfig.resetPegs) {
+		resetPegs();
+	}
 	if (!body.customConfig.nobounce) {
 		body.setActive(false);
 		body.mesh.scale.setScalar(0.25);
-	}
-
-	if (body.customConfig.resetPegs) {
-		resetPegs();
 	}
 }
 
@@ -149,7 +148,7 @@ for (let x = -Math.round(boardLength * 1.5); x < Math.round(boardLength * 1.5); 
 	createPeg(x * 0.5 + 0.5, Math.sin((x / boardLength) * Math.PI * 1.5), {
 		superbounce: Math.abs(x) === 4 || Math.abs(x) === 12,
 		//nobounce: Math.abs(x) === 8 || Math.abs(x) === 16 || x === 0,
-		resetPegs: Math.abs(x) === 8 || Math.abs(x) === 16 || x === 0,
+		resetPegs: Math.abs(x) === 8 || Math.abs(x) === 16,
 	})
 }
 

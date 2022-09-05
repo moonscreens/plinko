@@ -80,7 +80,7 @@ applyShader(GreenSpinningMat, {
 	fragment: `
 		float brightness = 0.0;
 		float angle = atan(vUv.x - 0.5, vUv.y - 0.5);
-		brightness += angle * 3.0 + u_time*0.005;
+		brightness += angle * 2.0 + u_time*0.005;
 		brightness = sin(brightness) + 1.0;
 		diffuseColor.rgb *= brightness;
 		totalEmissiveRadiance.rgb *= brightness;
