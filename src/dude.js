@@ -1,12 +1,11 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneGeometry, RepeatWrapping, TextureLoader, Vector3 } from "three";
-import { addTwistBetweenVectors, animateVector, checkOverlap, nearestNeighborify } from "./util";
+import { addBoardEmotes, addTwistBetweenVectors, animateVector, boardHasEmotes, checkOverlap, nearestNeighborify } from "./util";
 import { world } from "./physWorld";
 import * as Physics from "planck";
 import { camera } from "./camera";
 import { scene } from "./scene";
-import { AABB, Vec2 } from "planck";
 import { Vector2 } from "three";
-import { addBoardEmotes, boardHasEmotes, resetPegs } from "./board";
+import { resetPegs } from "./board";
 
 const dipVector = new Vector3(0, 0, -3) //dips hands into the background while moving
 const animateWithDip = (target, destination, duration = 3000) => {

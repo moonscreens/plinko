@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import { activeBoardEmotes } from './board';
 import { boardWidth } from './config';
 import { glassMaterial } from './materials';
-
 import { scene } from './scene';
-import { generateTextPlane, shiftGeometryLeft } from './util';
+import { activeBoardEmotes, generateTextPlane, LAYERS, shiftGeometryLeft } from './util';
+
+
 const chartWidth = 8;
 const chartHeight = chartWidth * 0.6;
 
@@ -20,9 +20,25 @@ const backplane = new THREE.Mesh(
 backplane.position.z = -0.1;
 main.add(backplane);
 
-const backplaneText = generateTextPlane(chartWidth, chartWidth*0.08, 20, 'Total Value On Board');
-backplaneText.position.y = chartHeight/2 + 0.6;
-main.add(backplaneText);
+const backplaneText = generateTextPlane(chartWidth, chartWidth * 0.08, 30, 'Total Value On Board');
+backplaneText.mesh.position.y = chartHeight / 2 + 0.6;
+main.add(backplaneText.mesh);
+backplaneText.mesh.layers.toggle(LAYERS.bloom);
+
+
+const valueCountText = generateTextPlane(chartWidth, chartWidth * 0.05, 30, '0');
+valueCountText.mesh.position.y = chartHeight / 2 -0.3;
+main.add(valueCountText.mesh);
+valueCountText.mesh.layers.toggle(LAYERS.bloom);
+
+
+const emoteCountText = generateTextPlane(chartWidth, chartWidth * 0.05, 30, '0 emotes');
+emoteCountText.mesh.position.y = -chartHeight / 2 + 0.3;
+main.add(emoteCountText.mesh);
+emoteCountText.mesh.layers.toggle(LAYERS.bloom);
+
+
+
 
 export const activateMarketplace = (TMIClient) => {
     TMIClient.on('message', (channel, userstate, message, self) => {
@@ -35,7 +51,7 @@ export const activateMarketplace = (TMIClient) => {
 };
 
 
-const totalValueArray = new Array(30).fill(1);
+const totalValueArray = new Array(30).fill(0);
 const totalValueGeometry = new THREE.BufferGeometry();
 totalValueGeometry.setAttribute(
     'position',
@@ -52,8 +68,8 @@ const totalValueLine = new THREE.Line(
     })
 );
 main.add(totalValueLine);
-totalValueLine.scale.set(chartWidth * 0.9, chartHeight * 0.9);
-totalValueLine.position.x -= chartWidth/2;
+totalValueLine.scale.set(chartWidth * 0.9, chartHeight * 0.7);
+totalValueLine.position.x -= chartWidth / 2;
 
 const totalValueLineMax = 250;
 
@@ -62,9 +78,16 @@ const recalcTotalValue = () => {
     for (let index = 0; index < activeBoardEmotes.length; index++) {
         const element = activeBoardEmotes[index];
         temp += isNaN(element.myScore) ? 0 : element.myScore;
+        if (isNaN(element.myScore)) {
+            console.log(element.onHit);
+            element.myScore = 0;
+        }
     };
     totalValueArray.push(temp / totalValueLineMax);
     totalValueArray.splice(0, 1);
+
+    valueCountText.updateText(temp.toLocaleString() + ' points');
+    emoteCountText.updateText(activeBoardEmotes.length + ' emotes');
 
     shiftGeometryLeft(totalValueGeometry);
 
@@ -72,7 +95,7 @@ const recalcTotalValue = () => {
     for (let index = 0; index < positions.count * positions.itemSize; index += positions.itemSize) {
         //console.log(index / 3, positions.array[index], positions.array[index + 1], positions.array[index + 2]);
         const valueIndex = index / 3;
-        positions.array[index] = valueIndex / (totalValueArray.length-1);
+        positions.array[index] = valueIndex / (totalValueArray.length - 1);
         positions.array[index + 1] = totalValueArray[valueIndex] - 0.5;
     }
     totalValueGeometry.setAttribute('position', positions);

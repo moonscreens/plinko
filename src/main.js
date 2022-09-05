@@ -3,7 +3,7 @@ import * as THREE from "three";
 import Stats from "stats-js";
 import "./main.css";
 
-import * as Physics from "planck";
+import { getBody, LAYERS, removeBody } from "./util";
 
 import { world } from "./physWorld";
 
@@ -151,7 +151,7 @@ scene.add(sun);
 
 scene.add(new THREE.AmbientLight(0xffffff, 0.3));
 
-import { board, pegShape } from './board.js';
+import { board } from './board.js';
 scene.add(board);
 import './bounces';
 
@@ -218,49 +218,6 @@ const sphereMaterial = new THREE.MeshBasicMaterial({
 //scene.add(instancedSphere);
 const dummy = new THREE.Object3D();
 
-const activeBodies = [];
-const inactiveBodies = [];
-let currentID = 0;
-
-function getBody() {
-	const pos = Physics.Vec2((Math.random() - 0.5) * 3 - 15, 12);
-	if (inactiveBodies.length === 0) {
-		const collider = world.createDynamicBody({
-			position: pos,
-		});
-		collider.objectType = 'emote';
-		collider.createFixture(pegShape);
-		collider.setMassData({
-			mass: 0.5,
-			center: Physics.Vec2(),
-			I: 1,
-		});
-		collider.setAngularDamping(0);
-		collider.myId = currentID++;
-		return collider;
-	} else {
-		const collider = inactiveBodies.splice(0, 1)[0];
-		collider.setLinearVelocity(Physics.Vec2(0, 0));
-		collider.setAngularVelocity(0);
-		collider.setPosition(pos);
-		collider.setActive(true);
-		collider.setAngle(0);
-		return collider;
-	}
-}
-function removeBody(id) {
-	let body = null;
-	for (let index = 0; index < activeBodies.length; index++) {
-		if (activeBodies[index].myId === id) {
-			body = activeBodies.splice(index, 1)[0];
-			continue;
-		}
-	}
-	if (body) {
-		inactiveBodies.push(body);
-	}
-}
-
 const dummyVector = new THREE.Vector2();
 ChatInstance.listen((emotes) => {
 	const emote = emotes[0];
@@ -272,7 +229,6 @@ ChatInstance.listen((emotes) => {
 
 	const collider = getBody();
 	collider.mesh = sprite;
-	activeBodies.push(collider);
 
 	sprite.update = () => {
 		const { p, q } = collider.getTransform();
@@ -310,4 +266,3 @@ import dude from './dude.js';
 scene.add(dude);
 
 import { initDev } from "./dev";
-import { LAYERS } from "./util";

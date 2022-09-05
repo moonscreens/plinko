@@ -1,5 +1,7 @@
 import { CanvasTexture, CatmullRomCurve3, Mesh, MeshBasicMaterial, NearestFilter, PlaneGeometry, Vector2, Vector3 } from "three";
 import { lerp } from "three/src/math/MathUtils";
+import * as Physics from "planck";
+import { world } from "./physWorld";
 
 const easeInOutSine = (x) => {
 	return -(Math.cos(Math.PI * x) - 1) / 2;
@@ -45,7 +47,7 @@ export const animateVector = (target, input_keyframes = [], duration = 1000, smo
 	const promise = new Promise((resolve, reject) => {
 		animationArray.push({
 			tick: (p) => {
-				if (smooth)target.copy(curve.getPoint(easeInOutSine(p)));
+				if (smooth) target.copy(curve.getPoint(easeInOutSine(p)));
 				else target.copy(lerpVectorArray(keyframes, easeInOutSine(p)));
 				//target.copy(curve.getPoint(easeInOutSine(p)));
 				if (p >= 1) resolve();
@@ -119,10 +121,10 @@ export const checkOverlap = (target, a, b) => {
 }
 
 export const shiftGeometryLeft = (geometry) => {
-    const positions = geometry.getAttribute('position');
-    for (let index = positions.itemSize; index < positions.count * positions.itemSize; index++) {
-        positions.array[index - positions.itemSize] = positions.array[index];
-    }
+	const positions = geometry.getAttribute('position');
+	for (let index = positions.itemSize; index < positions.count * positions.itemSize; index++) {
+		positions.array[index - positions.itemSize] = positions.array[index];
+	}
 	geometry.setAttribute('position', positions);
 }
 
@@ -131,17 +133,111 @@ export const generateTextPlane = (width, height, resolution, text) => {
 	canvas.width = Math.round(width * resolution);
 	canvas.height = Math.round(height * resolution);
 	const ctx = canvas.getContext('2d');
-	ctx.font = Math.round(height * resolution)+'px monospace';
-	ctx.fillStyle = '#2288ff';
-	ctx.fillText(text, 0, canvas.height);
+	ctx.font = "400 " + Math.round(height * resolution) + "px 'Comfortaa', monospace";
+	ctx.imageSmoothingEnabled = false;
+	ctx.fillStyle = '#2288bb';
 
 	const texture = new CanvasTexture(canvas);
 	texture.magFilter = NearestFilter;
-	return new Mesh(
-		new PlaneGeometry(width, height),
-		new MeshBasicMaterial({
-			map: texture,
-			transparent: true,
-		})
-	);
+	const updateText = (text) => {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.fillText(text, 0, canvas.height - 2);
+		texture.needsUpdate = true;
+	}
+	updateText(text);
+	window.addEventListener('load', ()=>{
+		updateText(text);
+	})
+	return {
+		mesh: new Mesh(
+			new PlaneGeometry(width, height),
+			new MeshBasicMaterial({
+				map: texture,
+				transparent: true,
+			})
+		),
+		ctx,
+		updateText,
+	}
+}
+
+
+export const activeBoardEmotes = [];
+
+export const pegShape = Physics.Circle(0.25);
+
+export const emoteDeath = (body) => {
+	for (let index = 0; index < activeBoardEmotes.length; index++) {
+		const element = activeBoardEmotes[index];
+		if (body.myId === element.myId) {
+			activeBoardEmotes.splice(index, 1);
+			break;
+		}
+	}
+}
+
+export const emoteHit = (body, surface) => {
+	body.myScore += 1;
+}
+
+export const boardHasEmotes = () => {
+	return activeBoardEmotes.length > 0;
+}
+
+export const addBoardEmotes = (list) => {
+	for (let index = 0; index < list.length; index++) {
+		const element = list[index];
+		activeBoardEmotes.push(element);
+	}
+}
+
+const activeBodies = [];
+const inactiveBodies = [];
+let currentID = 0;
+
+export function getBody() {
+	const pos = Physics.Vec2((Math.random() - 0.5) * 3 - 15, 12);
+	if (inactiveBodies.length === 0) {
+		const collider = world.createDynamicBody({
+			position: pos,
+		});
+		collider.objectType = 'emote';
+		collider.createFixture(pegShape);
+		collider.setMassData({
+			mass: 0.5,
+			center: Physics.Vec2(),
+			I: 1,
+		});
+		collider.setAngularDamping(0);
+		collider.myId = currentID++;
+
+
+		collider.onDeath = emoteDeath;
+		collider.onHit = emoteHit;
+		collider.myScore = 0;
+		activeBodies.push(collider);
+		return collider;
+	} else {
+		const collider = inactiveBodies.splice(0, 1)[0];
+		collider.setLinearVelocity(Physics.Vec2(0, 0));
+		collider.setAngularVelocity(0);
+		collider.setPosition(pos);
+		collider.setActive(true);
+		collider.setAngle(0);
+		activeBodies.push(collider);
+		return collider;
+	}
+}
+
+export function removeBody(id) {
+	let body = null;
+	for (let index = 0; index < activeBodies.length; index++) {
+		if (activeBodies[index].myId === id) {
+			body = activeBodies.splice(index, 1)[0];
+			continue;
+		}
+	}
+	if (body) {
+		inactiveBodies.push(body);
+	}
 }

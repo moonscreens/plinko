@@ -91,7 +91,6 @@ applyShader(GreenSpinningMat, {
 export const glassMaterial = new THREE.MeshStandardMaterial({
 	transparent: true,
 	opacity: 0.7,
-	reflectivity: 1,
 	metalness: 0.9,
 	roughness: 0.4,
 })
