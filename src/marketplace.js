@@ -6,6 +6,7 @@ import { scene } from './scene';
 import { activeBoardEmotes, generateTextPlane, LAYERS, shiftGeometryLeft } from './util';
 
 
+const chartResolution = 30;
 const chartWidth = 8;
 const chartHeight = chartWidth * 0.6;
 
@@ -22,9 +23,9 @@ backplane.position.z = -0.1;
 main.add(backplane);
 
 const grid = new THREE.Mesh(
-	new THREE.PlaneGeometry(chartWidth * 0.9, chartHeight * 0.7, Math.round(chartWidth * 1.5), Math.round(chartHeight * 1.5)),
+	new THREE.PlaneGeometry(chartWidth * 0.9, chartHeight * 0.7, chartResolution, Math.round(chartHeight * 3)),
 	new THREE.MeshBasicMaterial({
-		color: colors.green.clone().multiplyScalar(0.2),
+		color: colors.green.clone().multiplyScalar(0.3),
 		wireframe: true,
 	})
 );
@@ -62,7 +63,7 @@ export const activateMarketplace = (TMIClient) => {
 };
 
 
-const totalValueArray = new Array(30).fill(0);
+const totalValueArray = new Array(chartResolution).fill(0);
 const totalValueGeometry = new THREE.BufferGeometry();
 totalValueGeometry.setAttribute(
 	'position',
