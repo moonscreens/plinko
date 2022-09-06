@@ -25,10 +25,9 @@ world.on('begin-contact', function (contact) {
 		//const emoteVelocity = emote.getLinearVelocity();
 		//if (emoteVelocity.y < 0 && direction.y > 0) emote.setLinearVelocity(Physics.Vec2(emoteVelocity.x, emoteVelocity.y * 0.5));
 
-		let multiplier = 7;
-		if (peg.customConfig.superbounce) multiplier *= 4;
+		let multiplier = 8;
+		if (peg.customConfig.superbounce) multiplier *= 5;
 
-		multiplier += Math.random() * 5;
 
 		if (!peg.customConfig.nobounce) {
 			setTimeout(() => {
