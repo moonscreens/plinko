@@ -23,83 +23,96 @@ const animateWithDip = (target, destination, duration = 3000) => {
 }
 
 const spots = {
-	idle: {
-		all: new Vector3(-16, -4, 0),
-		head: new Vector3(0, 0, -4),
-		mainHand: new Vector3(3, -2, 0),
-		offHand: new Vector3(-3, -2, 0),
-		run: (spot) => {
-			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
-			animateWithDip(offHand.targetPos, spot.offHand);
-			animateWithDip(mainHand.targetPos, spot.mainHand);
+	idle: () => {
+		const spot = {
+			all: new Vector3(-16, -4, 0),
+			head: new Vector3(0, 0, -4),
+			mainHand: new Vector3(3, -2, 0),
+			offHand: new Vector3(-3, -2, 0),
+		}
+		animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
+		animateWithDip(offHand.targetPos, spot.offHand);
+		animateWithDip(mainHand.targetPos, spot.mainHand);
 
+		animateVector(camera.position, [
+			camera.position.clone(),
+			new Vector3(0, 0, 15)
+		], 5000).then(() => {
+			const interval = setInterval(() => {
+				if (!boardHasEmotes()) {
+					clearInterval(interval);
+					setTimeout(spots.catching, 0);
+				}
+			}, 1000);
+		});
+	},
+	catching: () => {
+		const spot = {
+			all: new Vector3(-19, -5, 0),
+			head: new Vector3(0, 0, -4),
+			mainHand: new Vector3(4, -2, 0),
+			offHand: new Vector3(-3, -2, -1.5),
+		}
+		handBody.setActive(true);
+		if (!boardHasEmotes()) {
 			animateVector(camera.position, [
 				camera.position.clone(),
-				new Vector3(0, 0, 15)
-			], 5000);
-		},
-	},
-	catching: {
-		all: new Vector3(-19, -5, 0),
-		head: new Vector3(0, 0, -4),
-		mainHand: new Vector3(4, -2, 0),
-		offHand: new Vector3(-3, -2, -1.5),
-		run: (spot) => {
-			handBody.setActive(true);
-			if (!boardHasEmotes()) {
-				animateVector(camera.position, [
-					camera.position.clone(),
-					new Vector3(-12, 0, 13)
-				], 4000);
-			}
-			animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
-			animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, -Math.PI)], 1000);
-			animateVector(offHand.targetPos, [offHand.targetPos, spot.offHand], 3000);
-			animateVector(mainHand.targetPos, [mainHand.targetPos, spot.mainHand], 3000);
-		},
-	},
-	dropping: {
-		all: new Vector3(-2, 12, 0),
-		head: new Vector3(0, 0, -4),
-		mainHand: new Vector3(2, -1, 0),
-		offHand: new Vector3(-5, -3, -1.5),
-		run: (spot) => {
-			handBody.setActive(false);
-			handGrasp();
-			animateVector(camera.position, [
-				camera.position.clone(),
-				new Vector3(0, 3, 17)
+				new Vector3(-12, 0, 13)
 			], 4000);
-			animateWithDip(offHand.targetPos, spot.offHand, 5000);
-			animateWithDip(mainHand.targetPos, spot.mainHand, 5000);
-			animateVector(
-				group.position,
-				[
-					group.position.clone(),
-					group.position.clone().add(new Vector3(-10, 15, 0)),
-					spot.all
-				], 5000).then(() => {
-					setTimeout(() => {
-						animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, 0)], 1000)
-							.then(() => {
-								handRelease();
-								resetPegs();
-							})
-					}, 4000)
-				})
-		},
+		}
+		animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
+		animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, -Math.PI)], 1000);
+		animateVector(offHand.targetPos, [offHand.targetPos, spot.offHand], 3000);
+		animateVector(mainHand.targetPos, [mainHand.targetPos, spot.mainHand], 3000);
+
+		setTimeout(() => {
+			const interval = setInterval(() => {
+				if (checkHand().length > 3) {
+					clearInterval(interval);
+					setTimeout(spots.dropping, 0);
+				}
+			}, 1000);
+		}, 5000);
+	},
+	dropping: () => {
+		const spot = {
+			all: new Vector3(-2, 12, 0),
+			head: new Vector3(0, 0, -4),
+			mainHand: new Vector3(2, -1, 0),
+			offHand: new Vector3(-5, -3, -1.5),
+		}
+		handBody.setActive(false);
+		handGrasp();
+		animateVector(camera.position, [
+			camera.position.clone(),
+			new Vector3(0, 3, 17)
+		], 4000);
+		animateWithDip(offHand.targetPos, spot.offHand, 5000);
+		animateWithDip(mainHand.targetPos, spot.mainHand, 5000);
+		animateVector(
+			group.position,
+			[
+				group.position.clone(),
+				group.position.clone().add(new Vector3(-10, 15, 0)),
+				spot.all
+			], 5000).then(() => {
+				setTimeout(() => {
+					animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, 0)], 1000)
+						.then(() => {
+							handRelease();
+							resetPegs();
+
+							setTimeout(() => {
+								setTimeout(spots.idle, 0);
+							}, 3100);
+						})
+				}, 4000)
+			})
 	},
 };
-let activeSpot = "dropping";
-const objKeys = Object.keys(spots);
-let objKeyIndex = objKeys.length;
-setInterval(() => {
-	objKeyIndex++;
-	if (objKeyIndex >= objKeys.length) objKeyIndex = 0;
-	activeSpot = objKeys[objKeyIndex];
-
-	spots[activeSpot].run(spots[activeSpot]);
-}, 10000);
+setTimeout(() => {
+	spots.catching();
+}, 3100);
 
 const group = new Group();
 
@@ -114,7 +127,7 @@ export const head = new Mesh(
 		transparent: true,
 	})
 );
-group.add(head);
+//group.add(head);
 
 const handGeometry = new PlaneGeometry(4, 4);
 export const mainHand = new Mesh(
@@ -158,12 +171,10 @@ offHand.targetRot = new Vector3(0, 0, 0);
 
 animateVector(group.position, [new Vector3(0, 0, -3), new Vector3(0, -1, -3), new Vector3(-3, 0, -3), new Vector3(0, 1, -2), new Vector3(3, 0, -2)], 3000);
 
-animateVector(head.targetPos, [head.targetPos.clone(), spots.idle.head], 1000);
-animateVector(mainHand.targetPos, [mainHand.targetPos.clone(), spots.idle.mainHand], 1000);
-animateVector(offHand.targetPos, [offHand.targetPos.clone(), spots.idle.offHand], 1000);
-
 const graspedEmotes = [];
-function handGrasp() {
+
+function checkHand() {
+	const array = [];
 	const handPos = new Vector3();
 	mainHand.getWorldPosition(handPos)
 	const handOverlapStart = new Vector2(
@@ -178,12 +189,21 @@ function handGrasp() {
 		if (body.objectType === 'emote') {
 			const { p, q } = body.getTransform();
 			if (checkOverlap(new Vector2(p.x, p.y), handOverlapStart, handOverlapEnd)) {
-				body.setActive(false);
-				body.isGrasped = true;
-				mainHand.attach(body.mesh);
-				graspedEmotes.push(body);
+				array.push(body);
 			}
 		}
+	}
+	return array;
+}
+
+function handGrasp() {
+	const emotes = checkHand();
+	for (let index = 0; index < emotes.length; index++) {
+		const body = emotes[index];
+		body.setActive(false);
+		body.isGrasped = true;
+		mainHand.attach(body.mesh);
+		graspedEmotes.push(body);
 	}
 	console.log(graspedEmotes.length, 'grasped');
 }
