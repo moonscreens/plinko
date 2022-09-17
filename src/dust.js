@@ -15,7 +15,7 @@ const dustMaterial = new THREE.PointsMaterial({
 	size: 0.07,
 	sizeAttenuation: true,
 	transparent: true,
-	opacity: 0.15,
+	opacity: 0.09,
 });
 
 applyShader(dustMaterial, {
