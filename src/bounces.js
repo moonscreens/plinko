@@ -1,5 +1,5 @@
 import { world } from './physWorld';
-import { hitPeg, resetPegs } from "./board";
+import { hitPeg } from "./board";
 
 world.on('begin-contact', function (contact) {
 	/* handle begin event */

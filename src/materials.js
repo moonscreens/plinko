@@ -3,7 +3,7 @@ import colors from './colors';
 
 window.shaderPID = 10000;
 
-function applyShader(material, options = {}) {
+export function applyShader(material, options = {}) {
 	material.onBeforeCompile = function (shader) {
 		shader.uniforms.u_time = { value: Math.random() * 1000 };
 		const uniforms = shader.uniforms;
@@ -22,26 +22,37 @@ function applyShader(material, options = {}) {
 		shader.vertexShader = shader.vertexShader.replace(
 			"void main()",
 			`
-			varying vec2 vUv;
+			${options.uvPass ? 'varying vec2 vUv;' : ''}
+			${options.tick ? "uniform float u_time;" : ""}
 			void main()`
 		);
 		shader.vertexShader = shader.vertexShader.replace(
 			"#include <begin_vertex>",
 			`
 			#include <begin_vertex>
-			vUv = uv;
+			${options.uvPass ? 'vUv = uv;' : ''}
 		`);
+
+		if (options.vertex && options.vertexInsert) {
+			shader.vertexShader = shader.vertexShader.replace(
+				options.vertexInsert,
+				options.vertexInsert + '\n' + options.vertex
+			);
+		}
 
 		shader.fragmentShader = shader.fragmentShader.replace(
 			"void main()",
 			`${options.tick ? "uniform float u_time;" : ""}
-			varying vec2 vUv;
+			${options.uvPass ? 'varying vec2 vUv;' : ''}
 			void main()`
 		);
-		shader.fragmentShader = shader.fragmentShader.replace(
-			options.fragmentInsert,
-			options.fragmentInsert + '\n' + options.fragment
-		);
+
+		if (options.fragment && options.fragmentInsert) {
+			shader.fragmentShader = shader.fragmentShader.replace(
+				options.fragmentInsert,
+				options.fragmentInsert + '\n' + options.fragment
+			);
+		}
 	};
 
 	// Make sure WebGLRenderer doesn't reuse a single program
@@ -58,6 +69,7 @@ export const RedSpinningMat = new THREE.MeshPhongMaterial({
 
 applyShader(RedSpinningMat, {
 	tick: true,
+	uvPass: true,
 	fragment: `
 		float flip = sin(u_time * 0.01);
 		float brightness = atan(vUv.x - 0.5, vUv.y - 0.5) * 3.0;
@@ -77,10 +89,11 @@ export const GreenSpinningMat = new THREE.MeshPhongMaterial({
 
 applyShader(GreenSpinningMat, {
 	tick: true,
+	uvPass: true,
 	fragment: `
 		float brightness = 0.0;
 		float angle = atan(vUv.x - 0.5, vUv.y - 0.5);
-		brightness += angle * 2.0 + u_time*0.005;
+		brightness += angle * 2.0 + u_time * 0.005;
 		brightness = sin(brightness) + 1.0;
 		diffuseColor.rgb *= brightness;
 		totalEmissiveRadiance.rgb *= brightness;

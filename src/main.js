@@ -155,6 +155,9 @@ import { board } from './board.js';
 scene.add(board);
 import './bounces';
 
+import dust from './dust.js';
+scene.add(dust);
+
 /*
 ** Draw loop
 */
