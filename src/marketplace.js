@@ -32,19 +32,19 @@ const grid = new THREE.Mesh(
 grid.position.z = -0.05;
 main.add(grid);
 
-const backplaneText = generateTextPlane(chartWidth, chartWidth * 0.08, 30, 'Total Value On Board');
+const backplaneText = generateTextPlane(chartWidth, chartWidth * 0.08, 100, 'Total Value On Board');
 backplaneText.mesh.position.y = chartHeight / 2 + 0.6;
 main.add(backplaneText.mesh);
 backplaneText.mesh.layers.toggle(LAYERS.bloom);
 
 
-const valueCountText = generateTextPlane(chartWidth, chartWidth * 0.05, 30, '0');
+const valueCountText = generateTextPlane(chartWidth, chartWidth * 0.05, 100, '0');
 valueCountText.mesh.position.y = chartHeight / 2 - 0.3;
 main.add(valueCountText.mesh);
 valueCountText.mesh.layers.toggle(LAYERS.bloom);
 
 
-const emoteCountText = generateTextPlane(chartWidth, chartWidth * 0.05, 30, '0 emotes');
+const emoteCountText = generateTextPlane(chartWidth, chartWidth * 0.05, 100, '0 emotes');
 emoteCountText.mesh.position.y = -chartHeight / 2 + 0.3;
 main.add(emoteCountText.mesh);
 emoteCountText.mesh.layers.toggle(LAYERS.bloom);
