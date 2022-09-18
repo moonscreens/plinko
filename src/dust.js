@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { applyShader } from './materials';
 
+const scene = new THREE.Object3D();
+
 const dustGeometry = new THREE.BufferGeometry();
 const vertices = [];
 
@@ -34,12 +36,19 @@ applyShader(dustMaterial, {
 });
 
 const dust = new THREE.Points(dustGeometry, dustMaterial);
+scene.add(dust);
+const dust2 = new THREE.Points(dustGeometry, dustMaterial);
+scene.add(dust2);
+
+dust.position.x = -10;
+dust2.position.x = 10;
 
 
 const tick = () => {
 	dust.rotation.y = performance.now() / 50000;
+	dust.rotation.y = -performance.now() / 50000;
 	window.requestAnimationFrame(tick);
 }
 tick();
 
-export default dust;
+export default scene;
