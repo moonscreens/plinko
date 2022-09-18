@@ -22,6 +22,7 @@ export function applyShader(material, options = {}) {
 		shader.vertexShader = shader.vertexShader.replace(
 			"void main()",
 			`
+			${options.positionPass ? 'varying vec3 vPos;' : ''}
 			${options.uvPass ? 'varying vec2 vUv;' : ''}
 			${options.tick ? "uniform float u_time;" : ""}
 			void main()`
@@ -30,6 +31,7 @@ export function applyShader(material, options = {}) {
 			"#include <begin_vertex>",
 			`
 			#include <begin_vertex>
+			${options.positionPass ? 'vPos = position;' : ''}
 			${options.uvPass ? 'vUv = uv;' : ''}
 		`);
 
@@ -42,7 +44,9 @@ export function applyShader(material, options = {}) {
 
 		shader.fragmentShader = shader.fragmentShader.replace(
 			"void main()",
-			`${options.tick ? "uniform float u_time;" : ""}
+			`
+			${options.tick ? "uniform float u_time;" : ""}
+			${options.positionPass ? 'varying vec3 vPos;' : ''}
 			${options.uvPass ? 'varying vec2 vUv;' : ''}
 			void main()`
 		);

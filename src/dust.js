@@ -19,15 +19,21 @@ const dustMaterial = new THREE.PointsMaterial({
 	size: 0.05,
 	sizeAttenuation: true,
 	transparent: true,
-	opacity: 0.5,
+	opacity: 0.35,
 });
 
 applyShader(dustMaterial, {
 	tick: true,
+	positionPass: true,
 	vertexInsert: '#include <begin_vertex>',
 	vertex: `
 		transformed.x += sin(position.x * 10.0 + u_time * 0.00001) * 10.0;
 		transformed.y += sin(position.z * 10.0 + u_time * 0.00001) * 10.0;
+	`,
+	fragmentInsert: '#include <color_fragment>',
+	fragment: `
+		diffuseColor.a *= sin(u_time * 0.001 + vPos.x + vPos.z) * 0.5 + 0.5;
+		diffuseColor.a *= sin(u_time * 0.0001 + vPos.y + vPos.z) * 0.5 + 0.5;
 	`,
 	/*fragmentInsert: '#include <color_fragment>',
 	fragment: `
