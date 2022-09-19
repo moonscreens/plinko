@@ -48,6 +48,9 @@ scene.add(dust);
 const dust2 = new THREE.Points(dustGeometry, dustMaterial);
 scene.add(dust2);
 
+dust.renderOrder = 1;
+dust2.renderOrder = 1;
+
 dust.position.x = -10;
 dust2.position.x = 10;
 
