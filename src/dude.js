@@ -48,7 +48,7 @@ const spots = {
 	},
 	catching: () => {
 		const spot = {
-			all: new Vector3(-19, -5, 0),
+			all: new Vector3(-19, -3, 0),
 			head: new Vector3(0, 0, -4),
 			mainHand: new Vector3(4, -2, 0),
 			offHand: new Vector3(-3, -2, -1.5),
