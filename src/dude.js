@@ -127,7 +127,7 @@ export const head = new Mesh(
 		transparent: true,
 	})
 );
-//group.add(head);
+group.add(head);
 
 const handGeometry = new PlaneGeometry(4, 4);
 export const mainHand = new Mesh(

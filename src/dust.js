@@ -6,7 +6,7 @@ const scene = new THREE.Object3D();
 const dustGeometry = new THREE.BufferGeometry();
 const vertices = [];
 
-for (let i = 0; i < 2000; i++) {
+for (let i = 0; i < 3000; i++) {
 	const direction = Math.random() * Math.PI * 2;
 	const distance = Math.random();
 	const x = Math.sin(direction) * 30 * distance;
@@ -16,10 +16,12 @@ for (let i = 0; i < 2000; i++) {
 }
 dustGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
 const dustMaterial = new THREE.PointsMaterial({
-	size: 0.05,
+	size: 0.1,
 	sizeAttenuation: true,
 	transparent: true,
-	opacity: 0.35,
+	blending: THREE.AdditiveBlending,
+	opacity: 0.15,
+	map: new THREE.TextureLoader().load('/particle.png'),
 });
 
 applyShader(dustMaterial, {
