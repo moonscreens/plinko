@@ -1,10 +1,10 @@
 import * as THREE from "three";
-import * as Physics from "planck";
 import { world } from "./physWorld";
 import { LAYERS, pegShape } from "./util";
 import colors from "./colors";
 import { glassMaterial, GreenSpinningMat, RedSpinningMat } from "./materials";
 import { boardHeight, boardWidth } from "./config";
+import RAPIER from "@dimforge/rapier2d";
 
 export const board = new THREE.Group();
 export const boardDepth = 0.4;
@@ -33,10 +33,12 @@ export function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, sp
 	WallMesh.scale.set(width, height, 1);
 	WallMesh.position.set(x, y, 0);
 	WallMesh.rotation.z = rotation;
-	const collider = world.createBody({
-		position: Physics.Vec2(x, y)
-	});
-	collider.createFixture(Physics.Box(width / 2, height / 2, Physics.Vec2(0, 0), rotation));
+
+	const collider = RAPIER.ColliderDesc.cuboid(width / 2, height / 2);
+	collider.setTranslation(x, y);
+	collider.setRotation(rotation);
+	world.createCollider(collider);
+
 
 	WallMesh.physics = collider;
 	collider.mesh = WallMesh;
@@ -93,26 +95,22 @@ export function createPeg(x, y, options = {}) {
 		PegMesh.add(CircleMesh);
 	}
 
-	const collider = world.createBody({
-		position: Physics.Vec2(x, y)
-	});
-	collider.createFixture(pegShape);
+	const body = world.createRigidBody(RAPIER.RigidBodyDesc.fixed());
+	body.userData = {type: 'peg', mesh: PegMesh, options};
+	world.createCollider(pegShape, body);
+	body.setTranslation(new RAPIER.Vector2(x, y));
 
-	PegMesh.physics = collider;
-	collider.mesh = PegMesh;
-	collider.objectType = 'peg';
-
-	collider.customConfig = options;
+	PegMesh.physics = body;
 
 	board.add(PegMesh);
-	pegBodies.push(collider);
+	pegBodies.push(body);
 }
 export function hitPeg(body) {
 	if (body.customConfig.resetPegs) {
 		resetPegs();
 	}
 	if (!body.customConfig.nobounce) {
-		body.setActive(false);
+		//body.setActive(false);
 		body.mesh.scale.setScalar(0.25);
 	}
 }
@@ -121,8 +119,8 @@ export function resetPegs() {
 	for (let index = 0; index < pegBodies.length; index++) {
 		const body = pegBodies[index];
 
-		body.setActive(true);
-		body.mesh.scale.setScalar(1);
+		//body.setActive(true);
+		body.userData.mesh.scale.setScalar(1);
 	}
 }
 

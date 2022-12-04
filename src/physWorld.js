@@ -1,6 +1,3 @@
-import * as Physics from "planck";
+import RAPIER from "@dimforge/rapier2d";
 
-export const world = new Physics.World({
-	gravity: Physics.Vec2(0, -7.5),
-	allowSleep: false,
-});
+export const world = new RAPIER.World({x: 0, y: -5});

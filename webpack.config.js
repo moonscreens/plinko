@@ -8,6 +8,9 @@ module.exports = {
 		path: `${__dirname}/dist`,
 		filename: 'bundle.js',
 	},
+	experiments: {
+		asyncWebAssembly: true,
+	},
 	plugins: [
 		new HtmlWebpackPlugin({
 			template: './src/index.html',

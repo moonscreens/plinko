@@ -1,7 +1,7 @@
 import { CanvasTexture, CatmullRomCurve3, Mesh, MeshBasicMaterial, NearestFilter, PlaneGeometry, Vector2, Vector3 } from "three";
 import { lerp } from "three/src/math/MathUtils";
-import * as Physics from "planck";
 import { world } from "./physWorld";
+import RAPIER from "@dimforge/rapier2d";
 
 const easeInOutSine = (x) => {
 	return -(Math.cos(Math.PI * x) - 1) / 2;
@@ -164,12 +164,20 @@ export const generateTextPlane = (width, height, resolution, text) => {
 
 export const activeBoardEmotes = [];
 
-export const pegShape = Physics.Circle(0.25);
+export const pegShape = RAPIER.ColliderDesc.ball(0.25);
+export const EmoteColliderDesc = new RAPIER.ColliderDesc(new RAPIER.Ball(0.35)).setDensity(0.5);
+
+const enableEvents = (collider) => {
+	collider.setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS);
+	collider.setActiveCollisionTypes(RAPIER.ActiveCollisionTypes.ALL);
+}
+enableEvents(pegShape);
+enableEvents(EmoteColliderDesc);
 
 export const onDeath = (body) => {
 	for (let index = 0; index < activeBoardEmotes.length; index++) {
 		const element = activeBoardEmotes[index];
-		if (body.myId === element.myId) {
+		if (body.userData.myId === element.userData.myId) {
 			activeBoardEmotes.splice(index, 1);
 			break;
 		}
@@ -177,7 +185,7 @@ export const onDeath = (body) => {
 }
 
 export const emoteHit = (body, surface) => {
-	body.myScore += 1;
+	body.userData.myScore += 1;
 }
 
 export const boardHasEmotes = () => {
@@ -185,58 +193,33 @@ export const boardHasEmotes = () => {
 }
 
 export const addBoardEmotes = (list) => {
+	if (list.length === undefined) {
+		list.userData.onDeath = onDeath;
+		activeBoardEmotes.push(list);
+		return;
+	}
 	for (let index = 0; index < list.length; index++) {
 		const element = list[index];
+		element.userData.onDeath = onDeath;
 		activeBoardEmotes.push(element);
 	}
 }
 
-const activeBodies = [];
-const inactiveBodies = [];
 let currentID = 0;
-
 export function getBody() {
-	const pos = Physics.Vec2((Math.random() - 0.5) * 3 - 15, 12);
-	if (inactiveBodies.length === 0) {
-		const collider = world.createDynamicBody({
-			position: pos,
-		});
-		collider.objectType = 'emote';
-		collider.createFixture(pegShape);
-		collider.setMassData({
-			mass: 0.5,
-			center: Physics.Vec2(),
-			I: 1,
-		});
-		collider.setAngularDamping(0);
-		collider.myId = currentID++;
+	const pos = new RAPIER.Vector2((Math.random() - 0.5) * 3 - 15, 12);
 
-		collider.onDeath = onDeath;
-		collider.onHit = emoteHit;
-		collider.myScore = 0;
-		activeBodies.push(collider);
-		return collider;
-	} else {
-		const collider = inactiveBodies.splice(0, 1)[0];
-		collider.setLinearVelocity(Physics.Vec2(0, 0));
-		collider.setAngularVelocity(0);
-		collider.setPosition(pos);
-		collider.setActive(true);
-		collider.setAngle(0);
-		activeBodies.push(collider);
-		return collider;
-	}
-}
+	// Or create the collider and attach it to a rigid-body.
+	let body = world.createRigidBody(RAPIER.RigidBodyDesc.dynamic());
+	body.setTranslation(pos);
 
-export function removeBody(id) {
-	let body = null;
-	for (let index = 0; index < activeBodies.length; index++) {
-		if (activeBodies[index].myId === id) {
-			body = activeBodies.splice(index, 1)[0];
-			continue;
-		}
+	body.userData = {
+		myId: currentID++,
+		type: 'emote',
 	}
-	if (body) {
-		inactiveBodies.push(body);
-	}
+
+	let collider = world.createCollider(EmoteColliderDesc, body);
+
+
+	return { body, collider };
 }

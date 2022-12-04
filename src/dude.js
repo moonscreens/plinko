@@ -1,11 +1,11 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneGeometry, RepeatWrapping, TextureLoader, Vector3 } from "three";
-import { addBoardEmotes, addTwistBetweenVectors, animateVector, boardHasEmotes, checkOverlap, nearestNeighborify } from "./util";
+import { addBoardEmotes, addTwistBetweenVectors, animateVector, boardHasEmotes, checkOverlap, nearestNeighborify, onDeath } from "./util";
 import { world } from "./physWorld";
-import * as Physics from "planck";
 import { camera } from "./camera";
 import { scene } from "./scene";
 import { Vector2 } from "three";
 import { resetPegs } from "./board";
+import RAPIER from "@dimforge/rapier2d";
 
 const dipVector = new Vector3(0, 0, -3) //dips hands into the background while moving
 const animateWithDip = (target, destination, duration = 3000) => {
@@ -53,7 +53,7 @@ const spots = {
 			mainHand: new Vector3(4, -2, 0),
 			offHand: new Vector3(-3, -2, -1.5),
 		}
-		handBody.setActive(true);
+		//handBody.setActive(true);
 		if (!boardHasEmotes()) {
 			animateVector(camera.position, [
 				camera.position.clone(),
@@ -67,6 +67,7 @@ const spots = {
 
 		setTimeout(() => {
 			const interval = setInterval(() => {
+				console.log(checkHand())
 				if (checkHand().length > 3) {
 					clearInterval(interval);
 					setTimeout(spots.dropping, 0);
@@ -81,7 +82,7 @@ const spots = {
 			mainHand: new Vector3(2, -1, 0),
 			offHand: new Vector3(-5, -3, -1.5),
 		}
-		handBody.setActive(false);
+		//handBody.setActive(false);
 		handGrasp();
 		animateVector(camera.position, [
 			camera.position.clone(),
@@ -141,14 +142,13 @@ group.add(mainHand);
 mainHand.material.map.wrapS = RepeatWrapping;
 mainHand.material.map.repeat.x = -1;
 
-const handBody = world.createBody({
-	position: Physics.Vec2(0, 0),
-	type: 'kinematic',
-});
-handBody.createFixture(Physics.Box(1.5, 0.5, Physics.Vec2(0, 0), 0));
-handBody.createFixture(Physics.Box(0.25, 1, Physics.Vec2(-1.75, 0.5), 0));
-handBody.createFixture(Physics.Box(0.25, 1, Physics.Vec2(1.75, 0.5), 0));
-handBody.setActive(false);
+const handBody = world.createRigidBody(
+	RAPIER.RigidBodyDesc.kinematicPositionBased()
+);
+world.createCollider(RAPIER.ColliderDesc.cuboid(1.5, 0.5), handBody);
+world.createCollider(RAPIER.ColliderDesc.cuboid(0.25, 1).setTranslation(-1.75, 0.5), handBody);
+world.createCollider(RAPIER.ColliderDesc.cuboid(0.25, 1).setTranslation(1.75, 0.5), handBody);
+//handBody.setActive(false);
 
 export const offHand = new Mesh(
 	handGeometry,
@@ -174,25 +174,23 @@ animateVector(group.position, [new Vector3(0, 0, -3), new Vector3(0, -1, -3), ne
 const graspedEmotes = [];
 
 function checkHand() {
-	const array = [];
 	const handPos = new Vector3();
-	mainHand.getWorldPosition(handPos)
-	const handOverlapStart = new Vector2(
-		handPos.x - 2,
-		handPos.y + 2
-	);
-	const handOverlapEnd = new Vector2(
-		handPos.x + 2,
-		handPos.y
-	);
-	for (let body = world.getBodyList(); body; body = body.getNext()) {
-		if (body.objectType === 'emote') {
-			const { p, q } = body.getTransform();
-			if (checkOverlap(new Vector2(p.x, p.y), handOverlapStart, handOverlapEnd)) {
-				array.push(body);
+	mainHand.getWorldPosition(handPos);
+
+	const array = [];
+
+	world.intersectionsWithShape(
+		new RAPIER.Vector2(handPos.x, handPos.y + 1),
+		0,
+		new RAPIER.Cuboid(4, 2),
+		(handle) => {
+			const parent = handle.parent();
+			if (parent && parent.userData) {
+				array.push(parent);
 			}
+			return true; // `false` stops the query
 		}
-	}
+	);
 	return array;
 }
 
@@ -200,31 +198,24 @@ function handGrasp() {
 	const emotes = checkHand();
 	for (let index = 0; index < emotes.length; index++) {
 		const body = emotes[index];
-		body.setActive(false);
-		body.isGrasped = true;
-		mainHand.attach(body.mesh);
-		graspedEmotes.push(body);
+		mainHand.attach(body.userData.sprite);
+		graspedEmotes.push(body.userData.sprite);
+		body.userData.disablePhysics();
 	}
 	console.log(graspedEmotes.length, 'grasped');
 }
 
 function handRelease() {
-	addBoardEmotes(graspedEmotes);
 	const worldPos = new Vector3();
 	for (let i = graspedEmotes.length - 1; i >= 0; i--) {
-		const body = graspedEmotes[i];
+		const sprite = graspedEmotes[i];
 
-		if (body.objectType === 'emote') {
-			body.setActive(true);
-			body.isGrasped = false;
-
-			body.mesh.getWorldPosition(worldPos);
-			scene.attach(body.mesh);
-			body.mesh.position.copy(worldPos);
-			body.setPosition(new Physics.Vec2(worldPos.x, worldPos.y));
-
-			graspedEmotes.splice(i, 1);
-		}
+		sprite.getWorldPosition(worldPos);
+		scene.add(sprite);
+		sprite.position.copy(worldPos);
+		sprite.enablePhysics(worldPos.x, worldPos.y);
+		addBoardEmotes(sprite.body);
+		graspedEmotes.splice(i, 1);
 	};
 }
 
@@ -245,12 +236,12 @@ group.tick = function tick(delta) {
 		mainHand.targetRot.z + Math.sin(performance.now() / 1200) * 0.2
 	);
 
-	const pos = handBody.getPosition();
+	const pos = handBody.translation();
 	const worldPos = new Vector3();
 	mainHand.getWorldPosition(worldPos);
 	pos.x = worldPos.x;
 	pos.y = worldPos.y;
-	handBody.setPosition(pos);
+	handBody.setTranslation(pos);
 
 	offHand.position.set(offHand.targetPos.x,
 		offHand.targetPos.y + Math.sin(performance.now() / 900 + 300) * 0.25,

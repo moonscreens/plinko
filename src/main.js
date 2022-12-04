@@ -3,7 +3,12 @@ import * as THREE from "three";
 import Stats from "stats-js";
 import "./main.css";
 
-import { getBody, LAYERS, removeBody } from "./util";
+import { initDev } from "./dev";
+import { Vector2 } from "@dimforge/rapier2d";
+
+import { collisionListener, eventQueue } from "./bounces";
+
+import { getBody, LAYERS } from "./util";
 
 import { world } from "./physWorld";
 
@@ -135,7 +140,7 @@ function resize() {
 	finalComposer.setSize(width, height);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+setTimeout(() => {
 	window.addEventListener('resize', resize);
 	if (stats) document.body.appendChild(stats.dom);
 	document.body.appendChild(renderer.domElement);
@@ -143,7 +148,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		resize();
 		draw();
 	})
-})
+}, 100);
 
 const sun = new THREE.DirectionalLight(0xffffff, 1);
 sun.position.set(1, 1, 0.5);
@@ -162,15 +167,15 @@ scene.add(dust);
 ** Draw loop
 */
 let lastFrame = performance.now();
-let lastDelta = 0;
 function draw() {
 	if (stats) stats.begin();
 	requestAnimationFrame(draw);
 	const delta = Math.min(1, Math.max(0, (performance.now() - lastFrame) / 1000));
 	lastFrame = performance.now();
-	lastDelta = delta;
 
-	world.step(delta, 8, 4);
+	world.step(eventQueue);
+	
+	eventQueue.drainCollisionEvents(collisionListener);
 
 
 	for (let index = sceneEmoteArray.length - 1; index >= 0; index--) {
@@ -230,16 +235,41 @@ ChatInstance.listen((emotes) => {
 
 	const sprite = new THREE.Mesh(emoteGeometry, emote.material);
 
-	const collider = getBody();
-	collider.mesh = sprite;
+	let body = getBody().body;
+
+	const userData = {
+		sprite,
+	}
+
+
+	const disablePhysics = () => {
+		world.removeRigidBody(body);
+		body = undefined;
+		delete sprite.body;
+	}
+	const enablePhysics = (x, y) => {
+		body = getBody().body;
+		body.setTranslation(new Vector2(x, y));
+		body.userData = {...userData, ...body.userData};
+		sprite.body = body;
+	}
+
+	userData.disablePhysics = disablePhysics;
+	userData.enablePhysics = enablePhysics;
+	sprite.disablePhysics = disablePhysics;
+	sprite.enablePhysics = enablePhysics;
+	sprite.body = body;
+
+	body.userData = {...userData, ...body.userData};
 
 	sprite.update = () => {
-		const { p, q } = collider.getTransform();
+		if (!body) return;
+		const physicsPos = body.translation();
 
-		if (!collider.isGrasped) {
-			sprite.position.set(p.x, p.y, 0);
+		if (!body.isGrasped) {
+			sprite.position.set(physicsPos.x, physicsPos.y, 0);
 
-			const velocity = collider.getLinearVelocity();
+			const velocity = body.linvel();
 			dummyVector.set(velocity.x, velocity.y).normalize();
 			//sprite.rotation.z = Math.atan2(dummyVector.x, dummyVector.y);
 
@@ -251,14 +281,12 @@ ChatInstance.listen((emotes) => {
 			//instancedSphere.setMatrixAt(collider.myId, dummy.matrixWorld);
 		}
 
-		if (p.y < -15) {
+		if (physicsPos.y < -15) {
 			sprite.destroy = true;
-			collider.myScore = 0;
-			if (collider.onDeath) {
-				collider.onDeath(collider);
+			if (body.userData.onDeath) {
+				body.userData.onDeath(body);
 			}
-			collider.setActive(false);
-			removeBody(collider.myId);
+			world.removeRigidBody(body);
 		}
 	}
 
@@ -269,4 +297,3 @@ ChatInstance.listen((emotes) => {
 import dude from './dude.js';
 scene.add(dude);
 
-import { initDev } from "./dev";

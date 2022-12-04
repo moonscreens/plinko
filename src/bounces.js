@@ -1,8 +1,37 @@
+import RAPIER from '@dimforge/rapier2d';
 import { world } from './physWorld';
 import { hitPeg } from "./board";
 
+export const eventQueue = new RAPIER.EventQueue(true);
+
+export const collisionListener = (handle1, handle2, started) => {
+	if (!started) return;
+
+	const bodyA = world.getRigidBody(handle1);
+	const bodyB = world.getRigidBody(handle2);
+	
+	let peg = false;
+	if (bodyA && bodyA.userData && bodyA.userData.type === 'peg') peg = bodyA;
+	if (bodyB && bodyB.userData && bodyB.userData.type === 'peg') peg = bodyB;
+
+	let emote = false;
+	if (bodyA && bodyA.userData && bodyA.userData.type === 'emote') emote = bodyA;
+	if (bodyB && bodyB.userData && bodyB.userData.type === 'emote') emote = bodyB;
+
+	if (peg && emote) {
+		console.log(peg, emote);
+		emote.resetForces(true);
+		emote.resetTorques(true);
+
+		const direction = emote.userData.mesh.position.clone().subtract(peg.userData.mesh.position).normalize();
+
+		emote.addForce(new RAPIER.Vector2(direction.x * 100, direction.y * 100));
+	}
+
+}
+
+/*
 world.on('begin-contact', function (contact) {
-	/* handle begin event */
 	const bodyA = contact.getFixtureA().getBody();
 	const bodyB = contact.getFixtureB().getBody();
 
@@ -50,4 +79,4 @@ world.on('begin-contact', function (contact) {
 		}
 	}
 });
-
+*/
