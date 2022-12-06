@@ -163,6 +163,13 @@ import './bounces';
 import dust from './dust.js';
 scene.add(dust);
 
+const physicsTickRate = Math.ceil(1000 / 120);
+setInterval(()=>{
+	world.step(eventQueue);
+	eventQueue.drainContactForceEvents(collisionListener);
+}, physicsTickRate);
+world.timestep = physicsTickRate / 1000;
+
 /*
 ** Draw loop
 */
@@ -173,12 +180,6 @@ function draw() {
 	requestAnimationFrame(draw);
 	const delta = Math.min(1, Math.max(0, (performance.now() - lastFrame) / 1000));
 	lastFrame = performance.now();
-
-	world.step(eventQueue);
-
-
-	//eventQueue.drainCollisionEvents(collisionListener);
-	eventQueue.drainContactForceEvents(collisionListener);
 
 
 	for (let index = sceneEmoteArray.length - 1; index >= 0; index--) {
