@@ -28,7 +28,7 @@ export const collisionListener = (event) => {
 			);
 
 			let multiplier = 1;
-			if (peg.userData.options.superbounce) multiplier *= 3;
+			if (peg.userData.options.superbounce) multiplier *= 5;
 			emote.applyImpulse({ x: Math.sin(direction) * -multiplier, y: Math.cos(direction) * -multiplier }, true);
 			hitPeg(peg);
 			emoteHit(emote);
