@@ -5,7 +5,7 @@ import { camera } from "./camera";
 import { scene } from "./scene";
 import { Vector2 } from "three";
 import { resetPegs } from "./board";
-import RAPIER from "@dimforge/rapier2d";
+import RAPIER, { Collider } from "@dimforge/rapier2d";
 
 const dipVector = new Vector3(0, 0, -3) //dips hands into the background while moving
 const animateWithDip = (target, destination, duration = 3000) => {
@@ -142,12 +142,18 @@ group.add(mainHand);
 mainHand.material.map.wrapS = RepeatWrapping;
 mainHand.material.map.repeat.x = -1;
 
+const setFriction = (collider) => {
+	collider.setFriction(1);
+	collider.setRestitution(0);
+	return collider;
+}
 const handBody = world.createRigidBody(
 	RAPIER.RigidBodyDesc.kinematicPositionBased()
 );
-world.createCollider(RAPIER.ColliderDesc.cuboid(1.5, 0.5), handBody);
-world.createCollider(RAPIER.ColliderDesc.cuboid(0.25, 1).setTranslation(-1.75, 0.5), handBody);
-world.createCollider(RAPIER.ColliderDesc.cuboid(0.25, 1).setTranslation(1.75, 0.5), handBody);
+
+world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(1.5, 0.5)), handBody);
+world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(0.25, 1).setTranslation(-1.75, 0.5)), handBody);
+world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(0.25, 1).setTranslation(1.75, 0.5)), handBody);
 //handBody.setActive(false);
 
 export const offHand = new Mesh(
