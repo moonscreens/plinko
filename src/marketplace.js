@@ -89,10 +89,9 @@ const recalcTotalValue = () => {
 	let temp = 0;
 	for (let index = 0; index < activeBoardEmotes.length; index++) {
 		const element = activeBoardEmotes[index];
-		temp += isNaN(element.myScore) ? 0 : element.myScore;
-		if (isNaN(element.myScore)) {
-			console.log(element.onHit);
-			element.myScore = 0;
+		temp += isNaN(element.userData.myScore) ? 0 : element.userData.myScore;
+		if (isNaN(element.userData.myScore)) {
+			element.userData.myScore = 0;
 		}
 	};
 	totalValueArray.push(temp / totalValueLineMax);

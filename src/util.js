@@ -180,8 +180,8 @@ export const onDeath = (body) => {
 	}
 }
 
-export const emoteHit = (body, surface) => {
-	body.userData.myScore += 1;
+export const emoteHit = (emoteBody, pegBody) => {
+	emoteBody.userData.myScore += 1;
 }
 
 export const boardHasEmotes = () => {
