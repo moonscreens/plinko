@@ -37,6 +37,10 @@ export function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0) {
 	const collider = RAPIER.ColliderDesc.cuboid(width / 2, height / 2);
 	collider.setTranslation(x, y);
 	collider.setRotation(rotation);
+	if (rotation === 0) {
+		collider.setRestitution(1);
+		collider.setFriction(0);
+	}
 	world.createCollider(collider);
 
 
@@ -113,7 +117,7 @@ export function hitPeg(body) {
 	}
 	if (!body.userData.options || !body.userData.options.nobounce) {
 		body.userData.mesh.scale.setScalar(0.25);
-		body.setTranslation({x: 999, y: 999});
+		body.setTranslation({ x: 999, y: 999 });
 	}
 }
 
@@ -121,7 +125,7 @@ export function resetPegs() {
 	for (let index = 0; index < pegBodies.length; index++) {
 		const body = pegBodies[index];
 		body.userData.mesh.scale.setScalar(1);
-		body.setTranslation({x: body.userData.mesh.position.x, y: body.userData.mesh.position.y});
+		body.setTranslation({ x: body.userData.mesh.position.x, y: body.userData.mesh.position.y });
 	}
 }
 
