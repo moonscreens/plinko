@@ -4,30 +4,37 @@ import { hitPeg } from "./board";
 
 export const eventQueue = new RAPIER.EventQueue(true);
 
-export const collisionListener = (handle1, handle2, started) => {
-	if (!started) return;
+export const collisionListener = (event) => {
+	try {
+		const bodyA = world.getCollider(event.collider1()).parent();
+		const bodyB = world.getCollider(event.collider2()).parent();
 
-	const bodyA = world.getRigidBody(handle1);
-	const bodyB = world.getRigidBody(handle2);
-	
-	let peg = false;
-	if (bodyA && bodyA.userData && bodyA.userData.type === 'peg') peg = bodyA;
-	if (bodyB && bodyB.userData && bodyB.userData.type === 'peg') peg = bodyB;
+		let peg = false;
+		if (bodyA && bodyA.userData && bodyA.userData.type === 'peg') peg = bodyA;
+		if (bodyB && bodyB.userData && bodyB.userData.type === 'peg') peg = bodyB;
 
-	let emote = false;
-	if (bodyA && bodyA.userData && bodyA.userData.type === 'emote') emote = bodyA;
-	if (bodyB && bodyB.userData && bodyB.userData.type === 'emote') emote = bodyB;
+		let emote = false;
+		if (bodyA && bodyA.userData && bodyA.userData.type === 'emote') emote = bodyA;
+		if (bodyB && bodyB.userData && bodyB.userData.type === 'emote') emote = bodyB;
 
-	if (peg && emote) {
-		console.log(peg, emote);
-		emote.resetForces(true);
-		emote.resetTorques(true);
+		if (peg && emote && !peg.userData.options.nobounce) {
+			//emote.resetForces();
+			//emote.resetTorques();
 
-		const direction = emote.userData.mesh.position.clone().subtract(peg.userData.mesh.position).normalize();
+			const direction = Math.atan2(
+				peg.userData.mesh.position.x - emote.userData.mesh.position.x,
+				peg.userData.mesh.position.y - emote.userData.mesh.position.y,
+			);
 
-		emote.addForce(new RAPIER.Vector2(direction.x * 100, direction.y * 100));
+			let multiplier = 1;
+			if (peg.userData.options.superbounce) multiplier *= 3;
+			emote.applyImpulse({ x: Math.sin(direction) * -multiplier, y: Math.cos(direction) * -multiplier }, true);
+			hitPeg(peg);
+		}
+
+	} catch (e) {
+		console.error(e);
 	}
-
 }
 
 /*

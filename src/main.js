@@ -167,6 +167,7 @@ scene.add(dust);
 ** Draw loop
 */
 let lastFrame = performance.now();
+
 function draw() {
 	if (stats) stats.begin();
 	requestAnimationFrame(draw);
@@ -174,8 +175,10 @@ function draw() {
 	lastFrame = performance.now();
 
 	world.step(eventQueue);
-	
-	eventQueue.drainCollisionEvents(collisionListener);
+
+
+	//eventQueue.drainCollisionEvents(collisionListener);
+	eventQueue.drainContactForceEvents(collisionListener);
 
 
 	for (let index = sceneEmoteArray.length - 1; index >= 0; index--) {
@@ -238,7 +241,7 @@ ChatInstance.listen((emotes) => {
 	let body = getBody().body;
 
 	const userData = {
-		sprite,
+		mesh: sprite,
 	}
 
 
@@ -250,7 +253,7 @@ ChatInstance.listen((emotes) => {
 	const enablePhysics = (x, y) => {
 		body = getBody().body;
 		body.setTranslation(new Vector2(x, y));
-		body.userData = {...userData, ...body.userData};
+		body.userData = { ...userData, ...body.userData };
 		sprite.body = body;
 	}
 
@@ -260,7 +263,7 @@ ChatInstance.listen((emotes) => {
 	sprite.enablePhysics = enablePhysics;
 	sprite.body = body;
 
-	body.userData = {...userData, ...body.userData};
+	body.userData = { ...userData, ...body.userData };
 
 	sprite.update = () => {
 		if (!body) return;
@@ -278,7 +281,6 @@ ChatInstance.listen((emotes) => {
 			dummy.rotation.z = -Math.atan2(dummyVector.x, dummyVector.y) - (Math.PI / 2);
 			sprite.rotation.z = dummy.rotation.z;
 			dummy.updateMatrixWorld();
-			//instancedSphere.setMatrixAt(collider.myId, dummy.matrixWorld);
 		}
 
 		if (physicsPos.y < -15) {

@@ -28,7 +28,7 @@ const noBouncePegMaterial = new THREE.MeshPhongMaterial({
 
 const wallGeometry = new THREE.BoxGeometry(1, 1, boardDepth);
 
-export function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, specialBounce = true) {
+export function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0) {
 	const WallMesh = new THREE.Mesh(wallGeometry, glassMaterial);
 	WallMesh.scale.set(width, height, 1);
 	WallMesh.position.set(x, y, 0);
@@ -42,13 +42,12 @@ export function createWall(x = 0, y = 0, width = 1, height = 1, rotation = 0, sp
 
 	WallMesh.physics = collider;
 	collider.mesh = WallMesh;
-	if (specialBounce) collider.objectType = 'wall';
 
 	board.add(WallMesh);
 }
 
 const wallWidth = 0.25;
-createWall(0, boardHeight / 2 - wallWidth / 2, boardWidth - wallWidth, wallWidth, 0, false); //top wall
+createWall(0, boardHeight / 2 - wallWidth / 2, boardWidth - wallWidth, wallWidth, 0); //top wall
 createWall(-boardWidth / 2, 0, wallWidth, boardHeight); //left wall
 createWall(boardWidth / 2, 0, wallWidth, boardHeight); //right wall
 
@@ -62,7 +61,6 @@ const glass = new THREE.Mesh(
 	})
 );
 glass.position.z += boardDepth / 2;
-//board.add(glass);
 
 const backGlass = glass.clone();
 backGlass.position.z *= -1;
@@ -70,10 +68,10 @@ board.add(backGlass);
 
 
 // idle walls outside board
-createWall(-15 + 0.526, 0 + 4, 2, 0.5, -Math.PI / 4, false);
-createWall(-15 - 0.526, 0 + 4, 2, 0.5, +Math.PI / 4, false);
-createWall(-15 + 3.5, -5 + 4, 5, 0.5, +0.5, false);
-createWall(-15 - 3.5, -5 + 4, 5, 0.5, -0.5, false);
+createWall(-15 + 0.526, 0 + 4, 2, 0.5, -Math.PI / 4);
+createWall(-15 - 0.526, 0 + 4, 2, 0.5, +Math.PI / 4);
+createWall(-15 + 3.5, -5 + 4, 5, 0.5, +0.5);
+createWall(-15 - 3.5, -5 + 4, 5, 0.5, -0.5);
 
 const pegBodies = [];
 export function createPeg(x, y, options = {}) {
@@ -96,9 +94,9 @@ export function createPeg(x, y, options = {}) {
 	}
 
 	const body = world.createRigidBody(RAPIER.RigidBodyDesc.fixed());
-	body.userData = {type: 'peg', mesh: PegMesh, options};
+	body.userData = { type: 'peg', mesh: PegMesh, options };
+	body.setTranslation({ x, y });
 	world.createCollider(pegShape, body);
-	body.setTranslation(new RAPIER.Vector2(x, y));
 
 	PegMesh.physics = body;
 
@@ -106,21 +104,24 @@ export function createPeg(x, y, options = {}) {
 	pegBodies.push(body);
 }
 export function hitPeg(body) {
-	if (body.customConfig.resetPegs) {
+	if (body.userData.type !== 'peg') {
+		console.warn('hitPeg called on non-peg body', body);
+		return;
+	}
+	if (body.userData.options?.resetPegs) {
 		resetPegs();
 	}
-	if (!body.customConfig.nobounce) {
-		//body.setActive(false);
-		body.mesh.scale.setScalar(0.25);
+	if (!body.userData.options || !body.userData.options.nobounce) {
+		body.userData.mesh.scale.setScalar(0.25);
+		body.setTranslation({x: 999, y: 999});
 	}
 }
 
 export function resetPegs() {
 	for (let index = 0; index < pegBodies.length; index++) {
 		const body = pegBodies[index];
-
-		//body.setActive(true);
 		body.userData.mesh.scale.setScalar(1);
+		body.setTranslation({x: body.userData.mesh.position.x, y: body.userData.mesh.position.y});
 	}
 }
 

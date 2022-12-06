@@ -167,17 +167,13 @@ export const activeBoardEmotes = [];
 export const pegShape = RAPIER.ColliderDesc.ball(0.25);
 export const EmoteColliderDesc = new RAPIER.ColliderDesc(new RAPIER.Ball(0.35)).setDensity(0.5);
 
-const enableEvents = (collider) => {
-	collider.setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS);
-	collider.setActiveCollisionTypes(RAPIER.ActiveCollisionTypes.ALL);
-}
-enableEvents(pegShape);
-enableEvents(EmoteColliderDesc);
+pegShape.setActiveEvents(RAPIER.ActiveEvents.CONTACT_FORCE_EVENTS);
+pegShape.setActiveCollisionTypes(RAPIER.ActiveCollisionTypes.DYNAMIC_DYNAMIC);
 
 export const onDeath = (body) => {
 	for (let index = 0; index < activeBoardEmotes.length; index++) {
 		const element = activeBoardEmotes[index];
-		if (body.userData.myId === element.userData.myId) {
+		if (body.handle === element.handle) {
 			activeBoardEmotes.splice(index, 1);
 			break;
 		}
@@ -205,21 +201,15 @@ export const addBoardEmotes = (list) => {
 	}
 }
 
-let currentID = 0;
 export function getBody() {
-	const pos = new RAPIER.Vector2((Math.random() - 0.5) * 3 - 15, 12);
-
+	const pos = new RAPIER.Vector2((Math.random() - 0.5) * 3 - 15, 12 + Math.random() * 3);
 	// Or create the collider and attach it to a rigid-body.
 	let body = world.createRigidBody(RAPIER.RigidBodyDesc.dynamic());
 	body.setTranslation(pos);
-
 	body.userData = {
-		myId: currentID++,
 		type: 'emote',
 	}
-
 	let collider = world.createCollider(EmoteColliderDesc, body);
-
 
 	return { body, collider };
 }

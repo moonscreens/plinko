@@ -198,8 +198,8 @@ function handGrasp() {
 	const emotes = checkHand();
 	for (let index = 0; index < emotes.length; index++) {
 		const body = emotes[index];
-		mainHand.attach(body.userData.sprite);
-		graspedEmotes.push(body.userData.sprite);
+		mainHand.attach(body.userData.mesh);
+		graspedEmotes.push(body.userData.mesh);
 		body.userData.disablePhysics();
 	}
 	console.log(graspedEmotes.length, 'grasped');
