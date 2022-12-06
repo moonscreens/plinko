@@ -53,7 +53,7 @@ const spots = {
 			mainHand: new Vector3(4, -2, 0),
 			offHand: new Vector3(-3, -2, -1.5),
 		}
-		//handBody.setActive(true);
+		enableHand();
 		if (!boardHasEmotes()) {
 			animateVector(camera.position, [
 				camera.position.clone(),
@@ -82,8 +82,8 @@ const spots = {
 			mainHand: new Vector3(2, -1, 0),
 			offHand: new Vector3(-5, -3, -1.5),
 		}
-		//handBody.setActive(false);
 		handGrasp();
+		disableHand();
 		animateVector(camera.position, [
 			camera.position.clone(),
 			new Vector3(0, 3, 17)
@@ -150,11 +150,24 @@ const setFriction = (collider) => {
 const handBody = world.createRigidBody(
 	RAPIER.RigidBodyDesc.kinematicPositionBased()
 );
+const colliders = [
+	world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(1.5, 0.5)), handBody),
+	world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(0.25, 1).setTranslation(-1.75, 0.5)), handBody),
+	world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(0.25, 1).setTranslation(1.75, 0.5)), handBody),
+];
 
-world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(1.5, 0.5)), handBody);
-world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(0.25, 1).setTranslation(-1.75, 0.5)), handBody);
-world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(0.25, 1).setTranslation(1.75, 0.5)), handBody);
-//handBody.setActive(false);
+const disableHand = () => {
+	for (let index = 0; index < colliders.length; index++) {
+		const element = colliders[index];
+		element.setCollisionGroups(0);
+	}
+};
+const enableHand = () => {
+	for (let index = 0; index < colliders.length; index++) {
+		const element = colliders[index];
+		element.setCollisionGroups(0xffffff);
+	}
+};
 
 export const offHand = new Mesh(
 	handGeometry,
@@ -248,6 +261,7 @@ group.tick = function tick(delta) {
 	pos.x = worldPos.x;
 	pos.y = worldPos.y;
 	handBody.setTranslation(pos);
+	handBody.setRotation(mainHand.rotation.z + Math.PI);
 
 	offHand.position.set(offHand.targetPos.x,
 		offHand.targetPos.y + Math.sin(performance.now() / 900 + 300) * 0.25,

@@ -169,6 +169,8 @@ export const EmoteColliderDesc = new RAPIER.ColliderDesc(new RAPIER.Ball(0.35)).
 
 pegShape.setActiveEvents(RAPIER.ActiveEvents.CONTACT_FORCE_EVENTS);
 pegShape.setActiveCollisionTypes(RAPIER.ActiveCollisionTypes.DYNAMIC_DYNAMIC);
+pegShape.setFriction(0);
+pegShape.setRestitution(1);
 
 export const onDeath = (body) => {
 	for (let index = 0; index < activeBoardEmotes.length; index++) {
