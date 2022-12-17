@@ -1,7 +1,7 @@
 import RAPIER from '@dimforge/rapier2d';
 import { world } from './physWorld';
 import { hitPeg } from "./board";
-import { emoteHit } from './util';
+import { emoteHit } from './marketplace';
 
 export const eventQueue = new RAPIER.EventQueue(true);
 

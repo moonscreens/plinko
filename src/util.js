@@ -161,9 +161,6 @@ export const generateTextPlane = (width, height, resolution, text) => {
 	}
 }
 
-
-export const activeBoardEmotes = [];
-
 export const pegShape = RAPIER.ColliderDesc.ball(0.25);
 export const EmoteColliderDesc = new RAPIER.ColliderDesc(new RAPIER.Ball(0.35)).setDensity(0.5);
 
@@ -172,36 +169,6 @@ pegShape.setActiveCollisionTypes(RAPIER.ActiveCollisionTypes.DYNAMIC_DYNAMIC);
 pegShape.setFriction(0);
 pegShape.setRestitution(1);
 
-export const onDeath = (body) => {
-	for (let index = 0; index < activeBoardEmotes.length; index++) {
-		const element = activeBoardEmotes[index];
-		if (body.handle === element.handle) {
-			activeBoardEmotes.splice(index, 1);
-			break;
-		}
-	}
-}
-
-export const emoteHit = (emoteBody, pegBody) => {
-	emoteBody.userData.myScore += 1;
-}
-
-export const boardHasEmotes = () => {
-	return activeBoardEmotes.length > 0;
-}
-
-export const addBoardEmotes = (list) => {
-	if (list.length === undefined) {
-		list.userData.onDeath = onDeath;
-		activeBoardEmotes.push(list);
-		return;
-	}
-	for (let index = 0; index < list.length; index++) {
-		const element = list[index];
-		element.userData.onDeath = onDeath;
-		activeBoardEmotes.push(element);
-	}
-}
 
 export function getBody() {
 	const pos = new RAPIER.Vector2((Math.random() - 0.5) * 3 - 15, 12 + Math.random() * 3);

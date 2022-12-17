@@ -76,7 +76,7 @@ const setupScaleInput = (name, vector, defaultValue = 1) => {
 }
 
 export const initDev = () => {
-
+	console.log('initDev');
 	setupTextureInput("Head", head.material);
 	setupScaleInput("Head", head.scale, 2);
 	setupTextureInput("Main Hand", mainHand.material);
@@ -84,8 +84,5 @@ export const initDev = () => {
 	setupTextureInput("Off Hand", offHand.material);
 	setupScaleInput("Off Hand", offHand.scale, 2);
 
-
-	document.addEventListener('DOMContentLoaded', () => {
 		document.body.appendChild(devWrapper);
-	})
 }

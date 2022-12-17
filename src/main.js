@@ -243,6 +243,7 @@ ChatInstance.listen((emotes) => {
 
 	const userData = {
 		mesh: sprite,
+		name: emote.name.toLowerCase(),
 	}
 
 

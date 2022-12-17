@@ -1,11 +1,13 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneGeometry, RepeatWrapping, TextureLoader, Vector3 } from "three";
-import { addBoardEmotes, addTwistBetweenVectors, animateVector, boardHasEmotes, checkOverlap, nearestNeighborify, onDeath } from "./util";
+import { addTwistBetweenVectors, animateVector, nearestNeighborify } from "./util";
 import { world } from "./physWorld";
 import { camera } from "./camera";
 import { scene } from "./scene";
 import { Vector2 } from "three";
 import { resetPegs } from "./board";
 import RAPIER, { Collider } from "@dimforge/rapier2d";
+import { addBoardEmotes, boardHasEmotes } from "./marketplace";
+
 
 const dipVector = new Vector3(0, 0, -3) //dips hands into the background while moving
 const animateWithDip = (target, destination, duration = 3000) => {
@@ -67,7 +69,6 @@ const spots = {
 
 		setTimeout(() => {
 			const interval = setInterval(() => {
-				console.log(checkHand())
 				if (checkHand().length > 3) {
 					clearInterval(interval);
 					setTimeout(spots.dropping, 0);
