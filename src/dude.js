@@ -26,7 +26,7 @@ const animateWithDip = (target, destination, duration = 3000) => {
 const spots = {
 	idle: () => {
 		const spot = {
-			all: new Vector3(-8, -4, -0),
+			all: new Vector3(12, -4, -0),
 			head: new Vector3(0, 0, -5),
 			mainHand: new Vector3(5, -4, -3),
 			offHand: new Vector3(-5, -4, -3),

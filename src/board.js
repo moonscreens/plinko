@@ -16,7 +16,7 @@ const circleGeometry = new THREE.RingGeometry(0.15, 0.25, 16, 1);
 circleGeometry.translate(0, 0, boardDepth / 2 + 0.04);
 
 const pegMaterial = new THREE.MeshPhongMaterial({
-	color: '#aaaaaa',
+	color: '#a0d4de',
 	shininess: 100,
 });
 
@@ -56,13 +56,8 @@ createWall(-boardWidth / 2, 0, wallWidth, boardHeight); //left wall
 createWall(boardWidth / 2, 0, wallWidth, boardHeight); //right wall
 
 const glass = new THREE.Mesh(
-	new THREE.PlaneGeometry(boardWidth - wallWidth, 17),
-	new THREE.MeshStandardMaterial({
-		transparent: true,
-		opacity: 0.8,
-		metalness: 1,
-		roughness: 0.4,
-	})
+	new THREE.PlaneGeometry(boardWidth - wallWidth, 21),
+	glassMaterial,
 );
 glass.position.z += boardDepth / 2;
 

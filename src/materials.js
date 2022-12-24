@@ -105,9 +105,8 @@ applyShader(GreenSpinningMat, {
 	fragmentInsert: '#include <emissivemap_fragment>'
 })
 
-export const glassMaterial = new THREE.MeshStandardMaterial({
+export const glassMaterial = new THREE.MeshPhongMaterial({
 	transparent: true,
-	opacity: 0.7,
-	metalness: 0.9,
-	roughness: 0.4,
+	opacity: 0.5,
+	color: 0x7d736e,
 })
