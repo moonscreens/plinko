@@ -26,12 +26,12 @@ const animateWithDip = (target, destination, duration = 3000) => {
 const spots = {
 	idle: () => {
 		const spot = {
-			all: new Vector3(12, -4, -0),
+			all: new Vector3(20, -8, -10),
 			head: new Vector3(0, 0, -5),
-			mainHand: new Vector3(5, -4, -3),
-			offHand: new Vector3(-5, -4, -3),
+			mainHand: new Vector3(5, -6, -2),
+			offHand: new Vector3(-5, -6, -2),
 		}
-		animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
+		animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 5000);
 		animateWithDip(offHand.targetPos, spot.offHand);
 		animateWithDip(mainHand.targetPos, spot.mainHand);
 
