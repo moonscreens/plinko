@@ -127,7 +127,7 @@ function restoreMaterial(obj) {
 	}
 }
 
-scene.fog = new THREE.Fog(0x000000, camera.position.z, camera.position.z + 15);
+scene.fog = new THREE.Fog(0x000000, camera.position.z, camera.position.z + 40);
 scene.background = new THREE.Color(0x000000);
 
 function resize() {
@@ -160,8 +160,8 @@ import { board } from './board.js';
 scene.add(board);
 import './bounces';
 
-import dust from './dust.js';
-scene.add(dust);
+//import dust from './dust.js';
+//scene.add(dust);
 
 const physicsTickRate = Math.ceil(1000 / 120);
 setInterval(()=>{
