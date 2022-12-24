@@ -3,9 +3,8 @@ import { addTwistBetweenVectors, animateVector, nearestNeighborify } from "./uti
 import { world } from "./physWorld";
 import { camera } from "./camera";
 import { scene } from "./scene";
-import { Vector2 } from "three";
 import { resetPegs } from "./board";
-import RAPIER, { Collider } from "@dimforge/rapier2d";
+import RAPIER from "@dimforge/rapier2d";
 import { addBoardEmotes, boardHasEmotes } from "./marketplace";
 
 
@@ -27,10 +26,10 @@ const animateWithDip = (target, destination, duration = 3000) => {
 const spots = {
 	idle: () => {
 		const spot = {
-			all: new Vector3(-16, -4, 0),
-			head: new Vector3(0, 0, -4),
-			mainHand: new Vector3(3, -2, 0),
-			offHand: new Vector3(-3, -2, 0),
+			all: new Vector3(-8, -4, -0),
+			head: new Vector3(0, 0, -5),
+			mainHand: new Vector3(5, -4, -3),
+			offHand: new Vector3(-5, -4, -3),
 		}
 		animateVector(group.position, addTwistBetweenVectors(group.position, spot.all), 3000);
 		animateWithDip(offHand.targetPos, spot.offHand);
@@ -53,7 +52,7 @@ const spots = {
 			all: new Vector3(-19, -3, 0),
 			head: new Vector3(0, 0, -4),
 			mainHand: new Vector3(4, -2, 0),
-			offHand: new Vector3(-3, -2, -1.5),
+			offHand: new Vector3(-5, -4, -3),
 		}
 		enableHand();
 		if (!boardHasEmotes()) {
@@ -123,7 +122,7 @@ export default group;
 const loader = new TextureLoader();
 
 export const head = new Mesh(
-	new PlaneGeometry(7, 7),
+	new PlaneGeometry(13, 13),
 	new MeshBasicMaterial({
 		map: loader.load("/face.png"),
 		transparent: true,
@@ -131,7 +130,7 @@ export const head = new Mesh(
 );
 group.add(head);
 
-const handGeometry = new PlaneGeometry(4, 4);
+const handGeometry = new PlaneGeometry(5, 5);
 export const mainHand = new Mesh(
 	handGeometry,
 	new MeshBasicMaterial({
