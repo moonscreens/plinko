@@ -103,6 +103,7 @@ export const addTwistBetweenVectors = (a, b) => {
 
 
 export const nearestNeighborify = (texture) => {
+	return;
 	texture.minFilter = NearestFilter;
 	texture.magFilter = NearestFilter;
 }

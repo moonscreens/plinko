@@ -62,7 +62,7 @@ activateMarketplace(ChatInstance.EmoteService.client);
 */
 import { camera } from "./camera";
 import { scene } from "./scene";
-const renderer = new THREE.WebGLRenderer({ antialias: false });
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
