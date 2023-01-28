@@ -13,7 +13,7 @@ const pegGeometry = new THREE.CylinderGeometry(0.25, 0.25, boardDepth, 16);
 pegGeometry.rotateX(Math.PI / 2);
 
 const circleGeometry = new THREE.RingGeometry(0.15, 0.25, 16, 1);
-circleGeometry.translate(0, 0, boardDepth / 2 + 0.04);
+circleGeometry.translate(0, 0, boardDepth / 2 + 0.08);
 
 const pegMaterial = new THREE.MeshPhongMaterial({
 	color: '#a0d4de',

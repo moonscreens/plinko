@@ -26,7 +26,7 @@ const animateWithDip = (target, destination, duration = 3000) => {
 const spots = {
 	idle: () => {
 		const spot = {
-			all: new Vector3(20, -8, -10),
+			all: new Vector3(20, -8, -7),
 			head: new Vector3(0, 0, -5),
 			mainHand: new Vector3(5, -6, -2),
 			offHand: new Vector3(-5, -6, -2),
@@ -98,6 +98,10 @@ const spots = {
 				spot.all
 			], 5000).then(() => {
 				setTimeout(() => {
+					animateVector(mainHand.targetPos, [
+						mainHand.targetPos,
+						new Vector3(mainHand.targetPos.x, mainHand.targetPos.y + 2, mainHand.targetPos.z)
+					], 1000);
 					animateVector(mainHand.targetRot, [mainHand.targetRot, new Vector3(0, 0, 0)], 1000)
 						.then(() => {
 							handRelease();
@@ -122,7 +126,7 @@ export default group;
 const loader = new TextureLoader();
 
 export const head = new Mesh(
-	new PlaneGeometry(13, 13),
+	new PlaneGeometry(15, 15),
 	new MeshBasicMaterial({
 		map: loader.load("/face.png"),
 		transparent: true,
@@ -130,7 +134,7 @@ export const head = new Mesh(
 );
 group.add(head);
 
-const handGeometry = new PlaneGeometry(5, 5);
+const handGeometry = new PlaneGeometry(6, 6);
 export const mainHand = new Mesh(
 	handGeometry,
 	new MeshBasicMaterial({
