@@ -1,7 +1,7 @@
 import TwitchChat from "twitch-chat-emotes-threejs";
 import * as THREE from "three";
-import Stats from "stats-js";
 import "./main.css";
+import Stats from "three/examples/jsm/libs/stats.module.js";
 
 import { initDev } from "./dev";
 import { Vector2 } from "@dimforge/rapier2d";
@@ -91,8 +91,21 @@ bloomComposer.renderToScreen = false;
 bloomComposer.addPass(renderScene);
 bloomComposer.addPass(bloomPass);
 
-import bloomVert from './bloom.vert';
-import bloomFrag from './bloom.frag';
+const bloomVert = /* glsl */`
+	varying vec2 vUv;
+	void main() {
+		vUv = uv;
+		gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+	}
+`;
+const bloomFrag = /* glsl */`
+	uniform sampler2D baseTexture;
+	uniform sampler2D bloomTexture;
+	varying vec2 vUv;
+	void main() {
+		gl_FragColor = (texture2D(baseTexture, vUv) + vec4(1.0) * texture2D(bloomTexture, vUv));
+	}
+`;
 const finalPass = new ShaderPass(
 	new THREE.ShaderMaterial({
 		uniforms: {
