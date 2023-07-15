@@ -62,7 +62,9 @@ activateMarketplace(ChatInstance.EmoteService.client);
 */
 import { camera } from "./camera";
 import { scene } from "./scene";
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({
+	antialias: true
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -149,8 +151,10 @@ function resize() {
 	camera.aspect = width / height;
 	camera.updateProjectionMatrix();
 	renderer.setSize(width, height);
+	renderer.setPixelRatio(window.devicePixelRatio);
 	bloomComposer.setSize(width, height);
 	finalComposer.setSize(width, height);
+	finalComposer.setPixelRatio(window.devicePixelRatio);
 }
 
 setTimeout(() => {
@@ -177,7 +181,7 @@ import './bounces';
 //scene.add(dust);
 
 const physicsTickRate = Math.ceil(1000 / 120);
-setInterval(()=>{
+setInterval(() => {
 	world.step(eventQueue);
 	eventQueue.drainContactForceEvents(collisionListener);
 }, physicsTickRate);
