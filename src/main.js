@@ -181,12 +181,12 @@ import './bounces';
 //import dust from './dust.js';
 //scene.add(dust);
 
-const physicsTickRate = Math.ceil(1000 / 120);
+const physicsTickRate = Math.ceil(1000 / 90);
 setInterval(() => {
 	world.step(eventQueue);
 	eventQueue.drainContactForceEvents(collisionListener);
 }, physicsTickRate);
-world.timestep = physicsTickRate / 1000;
+world.timestep = physicsTickRate / 1000 * 1.25;
 
 /*
 ** Draw loop
