@@ -1,6 +1,8 @@
+import "./main.css";
+import { world } from "./physWorld";
+
 import TwitchChat from "twitch-chat-emotes-threejs";
 import * as THREE from "three";
-import "./main.css";
 import Stats from "three/examples/jsm/libs/stats.module.js";
 
 import { initDev } from "./dev";
@@ -10,7 +12,6 @@ import { collisionListener, eventQueue } from "./bounces";
 
 import { getBody, LAYERS } from "./util";
 
-import { world } from "./physWorld";
 
 /*
 ** connect to twitch chat
