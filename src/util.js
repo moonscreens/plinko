@@ -132,7 +132,7 @@ export const shiftGeometryLeft = (geometry) => {
 export const generateTextPlane = (width, height, resolution, text) => {
 	const canvas = document.createElement('canvas');
 	canvas.width = Math.round(width * resolution);
-	canvas.height = Math.round(height * resolution);
+	canvas.height = Math.round(height * 1.25 * resolution);
 	const ctx = canvas.getContext('2d');
 	ctx.font = "400 " + Math.round(height * resolution) + "px 'Comfortaa', monospace";
 	ctx.imageSmoothingEnabled = false;
@@ -142,7 +142,7 @@ export const generateTextPlane = (width, height, resolution, text) => {
 	texture.magFilter = NearestFilter;
 	const updateText = (text) => {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		ctx.fillText(text, 0, canvas.height - 2);
+		ctx.fillText(text, 0, canvas.height * 0.7);
 		texture.needsUpdate = true;
 	}
 	updateText(text);
@@ -151,7 +151,7 @@ export const generateTextPlane = (width, height, resolution, text) => {
 	})
 	return {
 		mesh: new Mesh(
-			new PlaneGeometry(width, height),
+			new PlaneGeometry(width, height * 1.25),
 			new MeshBasicMaterial({
 				map: texture,
 				transparent: true,
@@ -163,12 +163,13 @@ export const generateTextPlane = (width, height, resolution, text) => {
 }
 
 export const pegShape = RAPIER.ColliderDesc.ball(0.25);
-export const EmoteColliderDesc = new RAPIER.ColliderDesc(new RAPIER.Ball(0.35)).setDensity(0.5);
+export const EmoteColliderDesc = new RAPIER.ColliderDesc(new RAPIER.Ball(0.35)).setDensity(1.5);
 
 pegShape.setActiveEvents(RAPIER.ActiveEvents.CONTACT_FORCE_EVENTS);
 pegShape.setActiveCollisionTypes(RAPIER.ActiveCollisionTypes.DYNAMIC_DYNAMIC);
 pegShape.setFriction(0);
 pegShape.setRestitution(1);
+pegShape.setContactForceEventThreshold(-1);
 
 
 export function getBody() {

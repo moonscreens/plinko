@@ -32,7 +32,7 @@ const grid = new THREE.Mesh(
 grid.position.z = -0.05;
 main.add(grid);
 
-const backplaneText = generateTextPlane(chartWidth, chartWidth * 0.08, 100, 'Total Value On Board');
+const backplaneText = generateTextPlane(chartWidth, chartWidth * 0.08, 100, 'Rigged Gamba Market');
 backplaneText.mesh.position.y = chartHeight / 2 + 0.6;
 main.add(backplaneText.mesh);
 backplaneText.mesh.layers.toggle(LAYERS.bloom);
@@ -190,7 +190,7 @@ const recalcTotalValue = () => {
 	totalValueArray.push(temp / totalValueLineMax);
 	totalValueArray.splice(0, 1);
 
-	valueCountText.updateText(temp.toLocaleString() + ' points');
+	valueCountText.updateText(temp.toLocaleString() + 'B Gamba Points');
 	emoteCountText.updateText(activeBoardEmotes.length + ' emotes');
 
 	shiftGeometryLeft(totalValueGeometry);

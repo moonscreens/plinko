@@ -16,8 +16,9 @@ const circleGeometry = new THREE.RingGeometry(0.15, 0.25, 16, 1);
 circleGeometry.translate(0, 0, boardDepth / 2 + 0.08);
 
 const pegMaterial = new THREE.MeshPhongMaterial({
-	color: '#a0d4de',
+	color: '#bfeaf2',
 	shininess: 100,
+	specular: 0xffffff,
 });
 
 const noBouncePegMaterial = new THREE.MeshPhongMaterial({
