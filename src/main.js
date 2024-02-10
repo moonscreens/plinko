@@ -72,7 +72,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 const bloomSettings = {
-	strength: 2,
+	strength: 0.5,
 	threshold: 0,
 	radius: 0,
 	scene: 'Scene with Glow'
@@ -167,7 +167,7 @@ setTimeout(() => {
 	})
 }, 100);
 
-const sun = new THREE.DirectionalLight(0xffffff, 1);
+const sun = new THREE.DirectionalLight(0xffffff, 2);
 sun.position.set(1, 1, 0.5);
 scene.add(sun);
 
@@ -234,13 +234,13 @@ function draw() {
 const sceneEmoteArray = [];
 const emoteGeometry = new THREE.PlaneGeometry(0.75, 0.75, 1, 1);
 
-const sphereGeometry = new THREE.CircleGeometry(0.25, 1, -Math.PI / 8, Math.PI / 4);
-sphereGeometry.translate(-0.5, 0, 0);
-sphereGeometry.scale(1.25, 1.25, 1.25);
-const sphereMaterial = new THREE.MeshBasicMaterial({
-	color: 0x444444,
-	opacity: 0.1,
-});
+// const sphereGeometry = new THREE.CircleGeometry(0.25, 1, -Math.PI / 8, Math.PI / 4);
+// sphereGeometry.translate(-0.5, 0, 0);
+// sphereGeometry.scale(1.25, 1.25, 1.25);
+// const sphereMaterial = new THREE.MeshBasicMaterial({
+// 	color: 0x444444,
+// 	opacity: 0.1,
+// });
 //const instancedSphere = new THREE.InstancedMesh(sphereGeometry, sphereMaterial, 1024);
 //instancedSphere.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
 

@@ -21,8 +21,8 @@
 	"homepage": "https://github.com/moonscreens/intro-example-threejs#readme",
 	"dependencies": {
 		"@dimforge/rapier2d": "^0.10.0",
-		"three": "^0.144.0",
-		"twitch-chat-emotes-threejs": "^0.4.1"
+		"three": "^0.161.0",
+		"twitch-chat-emotes-threejs": "^0.4.3"
 	},
 	"devDependencies": {
 		"vite": "^4.4.4",
