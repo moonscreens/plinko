@@ -107,7 +107,7 @@ export const initDev = () => {
 	insertTitle('Main Hand');
 	setupTextureInput("back texture", mainHand.material);
 	setupTextureInput("foreground texture", mainHandForeground.material);
-	setupSliderInput("foreground depth", 0, 0.5, (value) => {
+	setupSliderInput("foreground depth", 0, 2, (value) => {
 		mainHandForeground.position.set(0, 0, value);
 	});
 	setupScaleInput("scale", mainHand.scale, 2);
@@ -118,7 +118,7 @@ export const initDev = () => {
 	setupTextureInput("back texture", offHand.material);
 	setupTextureInput("foreground texture", offHandForeground.material);
 	setupScaleInput("scale", offHand.scale, 2);
-	setupSliderInput("foreground depth", 0, 1, (value) => {
+	setupSliderInput("foreground depth", 0, 2, (value) => {
 		offHandForeground.position.set(0, 0, value);
 	});
 

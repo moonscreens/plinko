@@ -155,7 +155,7 @@ export const mainHandForeground = new Mesh(
 	})
 );
 mainHand.add(mainHandForeground);
-mainHandForeground.position.set(0, 0, 0.01);
+mainHandForeground.position.set(0, 0, 0.3);
 
 const setFriction = (collider) => {
 	collider.setFriction(1);
@@ -201,7 +201,7 @@ export const offHandForeground = new Mesh(
 	})
 );
 offHand.add(offHandForeground);
-offHandForeground.position.set(0, 0, 0.01);
+offHandForeground.position.set(0, 0, 0.3);
 
 //nearestNeighborify(head.material.map);
 nearestNeighborify(mainHand.material.map);
