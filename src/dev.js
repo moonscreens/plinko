@@ -1,5 +1,5 @@
 import { CanvasTexture } from "three";
-import { head, mainHand, offHand } from "./dude";
+import { head, mainHand, mainHandForeground, offHand, offHandForeground } from "./dude";
 
 let currentId = 0;
 const devWrapper = document.createElement('div');
@@ -27,17 +27,17 @@ const createInput = (name, type, changeListener) => {
 		input.addEventListener('change', changeListener);
 	}
 
-	return {wrapper, input};
+	return { wrapper, input };
 }
 
 const containers = {};
 const getContainer = (name) => {
-	if (!containers[name]) {
+	if (!containers[name] || true) {
 		containers[name] = document.createElement('div');
 
-		const title = document.createElement('h3');
-		title.textContent = name;
-		containers[name].appendChild(title);
+		// const title = document.createElement('p');
+		// title.textContent = name;
+		// containers[name].appendChild(title);
 
 		devWrapper.appendChild(containers[name]);
 	}
@@ -45,7 +45,7 @@ const getContainer = (name) => {
 }
 
 const setupTextureInput = (name, material) => {
-	const {wrapper, input} = createInput('texture:', 'file', (e) => {
+	const { wrapper, input } = createInput(name + ':', 'file', (e) => {
 		const image = new Image();
 		image.onload = () => {
 			const canvas = document.createElement('canvas');
@@ -65,7 +65,7 @@ const setupTextureInput = (name, material) => {
 
 
 const setupScaleInput = (name, vector, defaultValue = 1) => {
-	const {wrapper, input} = createInput('scale:', 'range', (e) => {
+	const { wrapper, input } = createInput(name+':', 'range', (e) => {
 		const scale = (e.target.value / 300) * defaultValue * 2;
 		vector.setScalar(scale);
 	});
@@ -75,14 +75,53 @@ const setupScaleInput = (name, vector, defaultValue = 1) => {
 	getContainer(name).appendChild(wrapper);
 }
 
+const setupSliderInput = (name, min, max, callback) => {
+	const { wrapper, input } = createInput(name, 'range', (e) => {
+		callback(e.target.value);
+	});
+	input.min = min;
+	input.max = max;
+	input.value = (max - min) / 2;
+	input.step = 0.001;
+	getContainer(name).appendChild(wrapper);
+}
+
+const insertSeparator = () => {
+	const separator = document.createElement('hr');
+	devWrapper.appendChild(separator);
+}
+const insertTitle = (title) => {
+	const titleElement = document.createElement('h3');
+	titleElement.textContent = title;
+	devWrapper.appendChild(titleElement);
+}
+
 export const initDev = () => {
 	console.log('initDev');
+	insertTitle('Head');
 	setupTextureInput("Head", head.material);
 	setupScaleInput("Head", head.scale, 2);
-	setupTextureInput("Main Hand", mainHand.material);
-	setupScaleInput("Main Hand", mainHand.scale, 2);
-	setupTextureInput("Off Hand", offHand.material);
-	setupScaleInput("Off Hand", offHand.scale, 2);
+	insertSeparator();
 
-		document.body.appendChild(devWrapper);
+
+	insertTitle('Main Hand');
+	setupTextureInput("back texture", mainHand.material);
+	setupTextureInput("foreground texture", mainHandForeground.material);
+	setupSliderInput("foreground depth", 0, 0.5, (value) => {
+		mainHandForeground.position.set(0, 0, value);
+	});
+	setupScaleInput("scale", mainHand.scale, 2);
+	insertSeparator();
+
+
+	insertTitle('Off Hand');
+	setupTextureInput("back texture", offHand.material);
+	setupTextureInput("foreground texture", offHandForeground.material);
+	setupScaleInput("scale", offHand.scale, 2);
+	setupSliderInput("foreground depth", 0, 1, (value) => {
+		offHandForeground.position.set(0, 0, value);
+	});
+
+
+	document.body.appendChild(devWrapper);
 }

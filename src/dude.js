@@ -5,6 +5,7 @@ import { camera } from "./camera";
 import { scene } from "./scene";
 import { resetPegs } from "./board";
 import { addBoardEmotes, boardHasEmotes } from "./marketplace";
+import * as THREE from "three";
 
 
 const dipVector = new Vector3(0, 0, -3) //dips hands into the background while moving
@@ -137,13 +138,24 @@ const handGeometry = new PlaneGeometry(6, 6);
 export const mainHand = new Mesh(
 	handGeometry,
 	new MeshBasicMaterial({
-		map: loader.load("/hand.png"),
+		map: loader.load("/hand-background.png"),
 		transparent: true,
 	})
 );
 group.add(mainHand);
 mainHand.material.map.wrapS = RepeatWrapping;
 mainHand.material.map.repeat.x = -1;
+
+
+export const mainHandForeground = new Mesh(
+	handGeometry,
+	new MeshBasicMaterial({
+		map: loader.load("/hand-foreground.png"),
+		transparent: true,
+	})
+);
+mainHand.add(mainHandForeground);
+mainHandForeground.position.set(0, 0, 0.01);
 
 const setFriction = (collider) => {
 	collider.setFriction(1);
@@ -175,15 +187,27 @@ const enableHand = () => {
 export const offHand = new Mesh(
 	handGeometry,
 	new MeshBasicMaterial({
-		map: loader.load("/hand.png"),
+		map: loader.load("/hand-background.png"),
 		transparent: true,
 	})
 );
 group.add(offHand);
 
+export const offHandForeground = new Mesh(
+	handGeometry,
+	new MeshBasicMaterial({
+		map: loader.load("/hand-foreground.png"),
+		transparent: true,
+	})
+);
+offHand.add(offHandForeground);
+offHandForeground.position.set(0, 0, 0.01);
+
 //nearestNeighborify(head.material.map);
 nearestNeighborify(mainHand.material.map);
 nearestNeighborify(offHand.material.map);
+nearestNeighborify(mainHandForeground.material.map);
+nearestNeighborify(offHandForeground.material.map);
 
 head.targetPos = new Vector3(0, 0, -10);
 mainHand.targetPos = new Vector3(0, 0, -10);
