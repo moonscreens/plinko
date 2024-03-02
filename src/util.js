@@ -1,7 +1,6 @@
 import { CanvasTexture, CatmullRomCurve3, Mesh, MeshBasicMaterial, NearestFilter, PlaneGeometry, Vector2, Vector3 } from "three";
 import { lerp } from "three/src/math/MathUtils";
-import { world } from "./physWorld";
-import RAPIER from "@dimforge/rapier2d";
+import { world, RAPIER } from "./physWorld";
 
 const easeInOutSine = (x) => {
 	return -(Math.cos(Math.PI * x) - 1) / 2;
@@ -103,7 +102,6 @@ export const addTwistBetweenVectors = (a, b) => {
 
 
 export const nearestNeighborify = (texture) => {
-	return;
 	texture.minFilter = NearestFilter;
 	texture.magFilter = NearestFilter;
 }

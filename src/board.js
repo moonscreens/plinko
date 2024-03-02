@@ -1,10 +1,9 @@
 import * as THREE from "three";
-import { world } from "./physWorld";
+import { world, RAPIER } from "./physWorld";
 import { LAYERS, pegShape } from "./util";
 import colors from "./colors";
 import { glassMaterial, GreenSpinningMat, RedSpinningMat } from "./materials";
 import { boardHeight, boardWidth } from "./config";
-import RAPIER from "@dimforge/rapier2d";
 
 export const board = new THREE.Group();
 export const boardDepth = 0.4;

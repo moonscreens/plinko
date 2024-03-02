@@ -1,10 +1,9 @@
 import { Group, Mesh, MeshBasicMaterial, PlaneGeometry, RepeatWrapping, TextureLoader, Vector3 } from "three";
 import { addTwistBetweenVectors, animateVector, nearestNeighborify } from "./util";
-import { world } from "./physWorld";
+import { world, RAPIER } from "./physWorld";
 import { camera } from "./camera";
 import { scene } from "./scene";
 import { resetPegs } from "./board";
-import RAPIER from "@dimforge/rapier2d";
 import { addBoardEmotes, boardHasEmotes } from "./marketplace";
 
 
@@ -182,7 +181,7 @@ export const offHand = new Mesh(
 );
 group.add(offHand);
 
-nearestNeighborify(head.material.map);
+//nearestNeighborify(head.material.map);
 nearestNeighborify(mainHand.material.map);
 nearestNeighborify(offHand.material.map);
 

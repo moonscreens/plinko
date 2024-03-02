@@ -1,4 +1,4 @@
-import RAPIER from '@dimforge/rapier2d';
+import { RAPIER } from './physWorld';
 import { world } from './physWorld';
 import { hitPeg } from "./board";
 import { emoteHit } from './marketplace';

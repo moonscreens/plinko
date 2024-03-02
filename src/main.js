@@ -1,12 +1,11 @@
 import "./main.css";
-import { world } from "./physWorld";
+import { world, RAPIER } from "./physWorld";
 
 import TwitchChat from "twitch-chat-emotes-threejs";
 import * as THREE from "three";
 import Stats from "three/examples/jsm/libs/stats.module.js";
 
 import { initDev } from "./dev";
-import { Vector2 } from "@dimforge/rapier2d";
 
 import { collisionListener, eventQueue } from "./bounces";
 
@@ -272,7 +271,7 @@ ChatInstance.listen((emotes) => {
 	}
 	const enablePhysics = (x, y) => {
 		body = getBody().body;
-		body.setTranslation(new Vector2(x, y));
+		body.setTranslation(new RAPIER.Vector2(x, y));
 		body.userData = { ...userData, ...body.userData };
 		sprite.body = body;
 	}

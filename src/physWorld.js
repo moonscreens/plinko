@@ -1,9 +1,12 @@
-import RAPIER from "@dimforge/rapier2d";
+export const RAPIER = await import("@dimforge/rapier2d-compat");
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+await RAPIER.init();
 
-await sleep(500);
+// function sleep(ms) {
+//     return new Promise(resolve => setTimeout(resolve, ms));
+// }
+// await sleep(500);
 
-export const world = new RAPIER.World({x: 0, y: -15});
+RAPIER.init
+
+export const world = new RAPIER.World(new RAPIER.Vector2(0, -15));
