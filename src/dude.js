@@ -156,6 +156,8 @@ export const mainHandForeground = new Mesh(
 );
 mainHand.add(mainHandForeground);
 mainHandForeground.position.set(0, 0, 0.3);
+mainHandForeground.material.map.wrapS = RepeatWrapping;
+mainHandForeground.material.map.repeat.x = -1;
 
 const setFriction = (collider) => {
 	collider.setFriction(1);
