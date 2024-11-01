@@ -172,8 +172,8 @@ const xDiff = -0.5;
 const yDiff = -0.5;
 const colliders = [
 	world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(2, 0.5).setTranslation(0 + xDiff, -1.25 + yDiff)), handBody),
-	world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(0.25, 2).setTranslation(-2 + xDiff, 0 + yDiff).setRotation(Math.PI * 0.25)), handBody),
-	world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(0.25, 2).setTranslation(2 + xDiff, 0 + yDiff).setRotation(-Math.PI * 0.25)), handBody),
+	world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(0.25, 1.5).setTranslation(-2 + xDiff, 0 + yDiff).setRotation(Math.PI * 0.25)), handBody),
+	world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(0.25, 1.5).setTranslation(2 + xDiff, 0 + yDiff).setRotation(-Math.PI * 0.25)), handBody),
 ];
 
 
