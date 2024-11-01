@@ -142,7 +142,7 @@ function restoreMaterial(obj) {
 	}
 }
 
-scene.fog = new THREE.Fog(0x000000, camera.position.z, camera.position.z + 40);
+scene.fog = new THREE.Fog(0x000000, camera.position.z, camera.position.z + 30);
 scene.background = new THREE.Color(0x000000);
 
 function resize() {

@@ -5,7 +5,6 @@ import { camera } from "./camera";
 import { scene } from "./scene";
 import { resetPegs } from "./board";
 import { addBoardEmotes, boardHasEmotes } from "./marketplace";
-import * as THREE from "three";
 
 
 const dipVector = new Vector3(0, 0, -3) //dips hands into the background while moving
@@ -52,7 +51,7 @@ const spots = {
 			all: new Vector3(-19, -3, 0),
 			head: new Vector3(0, 0, -4),
 			mainHand: new Vector3(4, -2, 0),
-			offHand: new Vector3(-5, -4, -3),
+			offHand: new Vector3(-5, -4, -3.5),
 		}
 		enableHand();
 		if (!boardHasEmotes()) {
@@ -142,6 +141,7 @@ export const mainHand = new Mesh(
 		transparent: true,
 	})
 );
+mainHand.position.set(0, 0, -0.1);
 group.add(mainHand);
 mainHand.material.map.wrapS = RepeatWrapping;
 mainHand.material.map.repeat.x = -1;
@@ -155,7 +155,7 @@ export const mainHandForeground = new Mesh(
 	})
 );
 mainHand.add(mainHandForeground);
-mainHandForeground.position.set(0, 0, 0.3);
+mainHandForeground.position.set(0, 0, 0.1);
 mainHandForeground.material.map.wrapS = RepeatWrapping;
 mainHandForeground.material.map.repeat.x = -1;
 
@@ -167,11 +167,15 @@ const setFriction = (collider) => {
 const handBody = world.createRigidBody(
 	RAPIER.RigidBodyDesc.kinematicPositionBased()
 );
+
+const xDiff = -0.5;
+const yDiff = -0.5;
 const colliders = [
-	world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(1.5, 0.5)), handBody),
-	world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(0.25, 1).setTranslation(-1.75, 0.5)), handBody),
-	world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(0.25, 1).setTranslation(1.75, 0.5)), handBody),
+	world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(2, 0.5).setTranslation(0 + xDiff, -1.25 + yDiff)), handBody),
+	world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(0.25, 2).setTranslation(-2 + xDiff, 0 + yDiff).setRotation(Math.PI * 0.25)), handBody),
+	world.createCollider(setFriction(RAPIER.ColliderDesc.cuboid(0.25, 2).setTranslation(2 + xDiff, 0 + yDiff).setRotation(-Math.PI * 0.25)), handBody),
 ];
+
 
 const disableHand = () => {
 	for (let index = 0; index < colliders.length; index++) {
@@ -206,16 +210,16 @@ offHand.add(offHandForeground);
 offHandForeground.position.set(0, 0, 0.3);
 
 //nearestNeighborify(head.material.map);
-nearestNeighborify(mainHand.material.map);
-nearestNeighborify(offHand.material.map);
-nearestNeighborify(mainHandForeground.material.map);
-nearestNeighborify(offHandForeground.material.map);
+// nearestNeighborify(mainHand.material.map);
+// nearestNeighborify(offHand.material.map);
+// nearestNeighborify(mainHandForeground.material.map);
+// nearestNeighborify(offHandForeground.material.map);
 
 head.targetPos = new Vector3(0, 0, -10);
 mainHand.targetPos = new Vector3(0, 0, -10);
 mainHand.targetRot = new Vector3(0, 0, 0);
 offHand.targetPos = new Vector3(0, 0, -10);
-offHand.targetRot = new Vector3(0, 0, 0);
+offHand.targetRot = new Vector3(0, 0, Math.PI);
 
 animateVector(group.position, [new Vector3(0, 0, -3), new Vector3(0, -1, -3), new Vector3(-3, 0, -3), new Vector3(0, 1, -2), new Vector3(3, 0, -2)], 3000);
 
@@ -268,20 +272,21 @@ function handRelease() {
 }
 
 group.tick = function tick(delta) {
+	const n = performance.now();
 	head.position.set(
 		head.targetPos.x,
-		head.targetPos.y + Math.sin(performance.now() / 1500) * 0.4,
+		head.targetPos.y + Math.sin(n / 1500) * 0.4,
 		head.targetPos.z
 	);
 	mainHand.position.set(
 		mainHand.targetPos.x,
-		mainHand.targetPos.y + Math.sin(performance.now() / 1000 + 100) * 0.25,
+		mainHand.targetPos.y + Math.sin(n / 1000 + 100) * 0.25,
 		mainHand.targetPos.z
 	);
 	mainHand.rotation.set(
 		mainHand.targetRot.x,
 		mainHand.targetRot.y,
-		mainHand.targetRot.z + Math.sin(performance.now() / 1200) * 0.2
+		mainHand.targetRot.z + Math.sin(n / 1200) * 0.2
 	);
 
 	const pos = handBody.translation();
@@ -293,12 +298,12 @@ group.tick = function tick(delta) {
 	handBody.setRotation(mainHand.rotation.z + Math.PI);
 
 	offHand.position.set(offHand.targetPos.x,
-		offHand.targetPos.y + Math.sin(performance.now() / 900 + 300) * 0.25,
+		offHand.targetPos.y + Math.sin(n / 900 + 300) * 0.25,
 		offHand.targetPos.z
 	);
 	offHand.rotation.set(
 		offHand.targetRot.x,
 		offHand.targetRot.y,
-		offHand.targetRot.z + Math.cos(performance.now() / 1000 + 100) * 0.2
+		offHand.targetRot.z + Math.cos(n / 1000 + 100) * 0.2
 	);
 };
